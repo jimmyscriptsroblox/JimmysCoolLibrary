@@ -21,16 +21,18 @@ function JimmysCoolLibrary:ApplyTheme(frame, theme)
     if theme and themes[theme] then
         frame.BackgroundColor3 = themes[theme].BackgroundColor3
         frame.BackgroundTransparency = themes[theme].Transparency or 0
+
+        if themes[theme].Texture then
+            local texture = Instance.new("ImageLabel", frame)
+            texture.Image = themes[theme].Texture
+            texture.Size = UDim2.new(1, 0, 1, 0)
+            texture.BackgroundTransparency = themes[theme].Transparency or 0
+            texture.ZIndex = -1
+        end
+
         for _, child in pairs(frame:GetDescendants()) do
             if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
                 child.TextColor3 = themes[theme].TextColor3
-            end
-            if child:IsA("Frame") and themes[theme].Texture then
-                local texture = Instance.new("ImageLabel", child)
-                texture.Image = themes[theme].Texture
-                texture.Size = UDim2.new(1, 0, 1, 0)
-                texture.BackgroundTransparency = themes[theme].Transparency or 0
-                texture.ZIndex = child.ZIndex - 1
             end
         end
     end

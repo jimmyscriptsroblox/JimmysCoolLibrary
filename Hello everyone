@@ -1,6 +1,42 @@
 local JimmysCoolLibrary = {}
 
-function JimmysCoolLibrary:CreateHub(title)
+local themes = {
+    PoolTheme = {
+        BackgroundColor3 = Color3.fromRGB(173, 216, 230), -- Light blue
+        TextColor3 = Color3.fromRGB(0, 0, 0), -- Black text
+        Texture = "rbxassetid://5307827373", -- Water texture ID
+        Transparency = 0.8
+    },
+    MangaTheme = {
+        BackgroundColor3 = Color3.fromRGB(245, 245, 245), -- White
+        TextColor3 = Color3.fromRGB(128, 128, 128), -- Light grey text
+    },
+    DarkTheme = {
+        BackgroundColor3 = Color3.fromRGB(35, 35, 35), -- Dark background
+        TextColor3 = Color3.fromRGB(255, 255, 255), -- White text
+    }
+}
+
+function JimmysCoolLibrary:ApplyTheme(frame, theme)
+    if theme and themes[theme] then
+        frame.BackgroundColor3 = themes[theme].BackgroundColor3
+        frame.BackgroundTransparency = themes[theme].Transparency or 0
+        for _, child in pairs(frame:GetDescendants()) do
+            if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
+                child.TextColor3 = themes[theme].TextColor3
+            end
+            if child:IsA("Frame") and themes[theme].Texture then
+                local texture = Instance.new("ImageLabel", child)
+                texture.Image = themes[theme].Texture
+                texture.Size = UDim2.new(1, 0, 1, 0)
+                texture.BackgroundTransparency = themes[theme].Transparency or 0
+                texture.ZIndex = child.ZIndex - 1
+            end
+        end
+    end
+end
+
+function JimmysCoolLibrary:CreateHub(title, theme)
     local screenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
     local mainFrame = Instance.new("Frame", screenGui)
     mainFrame.Size = UDim2.new(0, 600, 0, 400)
@@ -104,6 +140,20 @@ function JimmysCoolLibrary:CreateHub(title)
             table.insert(self.elements, scroller)
         end
 
+        function tab:AddScrollerWalkspeed(scrollerText, callback)
+            self:AddScroller(scrollerText, function(value)
+                game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+                callback(value)
+            end)
+        end
+
+        function tab:AddScrollerJumppower(scrollerText, callback)
+            self:AddScroller(scrollerText, function(value)
+                game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+                callback(value)
+            end)
+        end
+
         self.tabs[tabIndex] = tab
         if tabIndex == 1 then
             tabScrollFrame.Visible = true
@@ -112,6 +162,13 @@ function JimmysCoolLibrary:CreateHub(title)
         end
 
         return tab
+    end
+
+    if theme then
+        if theme == "default" then
+            theme = "DarkTheme"
+        end
+        self:ApplyTheme(mainFrame, theme)
     end
 
     return window

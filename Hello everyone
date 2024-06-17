@@ -5,7 +5,7 @@ local themes = {
         BackgroundColor3 = Color3.fromRGB(173, 216, 230), -- Light blue
         TextColor3 = Color3.fromRGB(0, 0, 0), -- Black text
         Texture = "rbxassetid://5307827373", -- Water texture ID
-        Transparency = 0.8
+        Transparency = 0.5
     },
     MangaTheme = {
         BackgroundColor3 = Color3.fromRGB(245, 245, 245), -- White

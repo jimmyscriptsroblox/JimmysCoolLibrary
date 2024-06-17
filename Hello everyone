@@ -1,0 +1,120 @@
+local JimmysCoolLibrary = {}
+
+function JimmysCoolLibrary:CreateHub(title)
+    local screenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+    local mainFrame = Instance.new("Frame", screenGui)
+    mainFrame.Size = UDim2.new(0, 600, 0, 400)
+    mainFrame.Position = UDim2.new(0.5, -300, 0.5, -200)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+
+    local titleBar = Instance.new("TextLabel", mainFrame)
+    titleBar.Size = UDim2.new(1, 0, 0, 25)
+    titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    titleBar.BorderSizePixel = 0
+    titleBar.Text = title or "Hub"
+    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+    local tabButtonHolder = Instance.new("Frame", mainFrame)
+    tabButtonHolder.Size = UDim2.new(1, 0, 0, 30)
+    tabButtonHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    tabButtonHolder.BorderSizePixel = 0
+
+    local tabHolder = Instance.new("Frame", mainFrame)
+    tabHolder.Size = UDim2.new(1, -20, 1, -60)
+    tabHolder.Position = UDim2.new(0, 10, 0, 40)
+    tabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    tabHolder.BorderSizePixel = 0
+
+    local window = {frame = mainFrame, tabs = {}, tabButtonHolder = tabButtonHolder}
+
+    function window:AddTab(name)
+        local tabIndex = #self.tabs + 1
+
+        local tabButton = Instance.new("TextButton", self.tabButtonHolder)
+        tabButton.Text = name
+        tabButton.Size = UDim2.new(0, 100, 0, 25)
+        tabButton.Position = UDim2.new(0, (tabIndex - 1) * 105, 0, 0)
+        tabButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+        tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabButton.BorderSizePixel = 0
+
+        local tabScrollFrame = Instance.new("ScrollingFrame", tabHolder)
+        tabScrollFrame.Size = UDim2.new(1, 0, 1, 0)
+        tabScrollFrame.Position = UDim2.new(0, 0, 0, 0)
+        tabScrollFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        tabScrollFrame.BorderSizePixel = 0
+        tabScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+        tabScrollFrame.ScrollBarThickness = 10
+
+        tabButton.MouseButton1Click:Connect(function()
+            for _, tab in pairs(self.tabs) do
+                tab.scrollFrame.Visible = false
+            end
+            tabScrollFrame.Visible = true
+        end)
+
+        local tab = {scrollFrame = tabScrollFrame, elements = {}}
+
+        function tab:AddText(content)
+            local textLabel = Instance.new("TextLabel", self.scrollFrame)
+            textLabel.Text = content
+            textLabel.Size = UDim2.new(0, 300, 0, 50)
+            textLabel.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            textLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.BorderSizePixel = 0
+            table.insert(self.elements, textLabel)
+        end
+
+        function tab:AddButton(buttonText, callback)
+            local button = Instance.new("TextButton", self.scrollFrame)
+            button.Text = buttonText
+            button.Size = UDim2.new(0, 300, 0, 50)
+            button.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            button.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+            button.TextColor3 = Color3.fromRGB(255, 255, 255)
+            button.BorderSizePixel = 0
+            button.MouseButton1Click:Connect(callback)
+            table.insert(self.elements, button)
+        end
+
+        function tab:AddScroller(scrollerText, callback)
+            local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
+            scrollerLabel.Text = scrollerText
+            scrollerLabel.Size = UDim2.new(0, 300, 0, 30)
+            scrollerLabel.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            scrollerLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            scrollerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            scrollerLabel.BorderSizePixel = 0
+            table.insert(self.elements, scrollerLabel)
+
+            local scroller = Instance.new("TextBox", self.scrollFrame)
+            scroller.Text = "0"
+            scroller.Size = UDim2.new(0, 300, 0, 30)
+            scroller.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            scroller.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+            scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
+            scroller.BorderSizePixel = 0
+            scroller.FocusLost:Connect(function()
+                callback(tonumber(scroller.Text))
+            end)
+            table.insert(self.elements, scroller)
+        end
+
+        self.tabs[tabIndex] = tab
+        if tabIndex == 1 then
+            tabScrollFrame.Visible = true
+        else
+            tabScrollFrame.Visible = false
+        end
+
+        return tab
+    end
+
+    return window
+end
+
+return JimmysCoolLibrary

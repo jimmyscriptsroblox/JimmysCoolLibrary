@@ -1,42 +1,6 @@
 local JimmysCoolLibrary = {}
 
-local themes = {
-    PoolTheme = {
-        BackgroundColor3 = Color3.fromRGB(173, 216, 230), -- Light blue
-        TextColor3 = Color3.fromRGB(0, 0, 0), -- Black text
-        Texture = "rbxassetid://5307827373", -- Water texture ID
-        Transparency = 0.4
-    },
-    MangaTheme = {
-        BackgroundColor3 = Color3.fromRGB(245, 245, 245), -- White
-        TextColor3 = Color3.fromRGB(128, 128, 128), -- Light grey text
-    },
-    DarkTheme = {
-        BackgroundColor3 = Color3.fromRGB(35, 35, 35), -- Dark background
-        TextColor3 = Color3.fromRGB(255, 255, 255), -- White text
-    }
-}
-
-function JimmysCoolLibrary:ApplyTheme(frame, theme)
-    if theme and themes[theme] then
-        frame.BackgroundColor3 = themes[theme].BackgroundColor3
-        frame.BackgroundTransparency = themes[theme].Transparency or 0
-        for _, child in pairs(frame:GetDescendants()) do
-            if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
-                child.TextColor3 = themes[theme].TextColor3
-            end
-            if child:IsA("Frame") and themes[theme].Texture then
-                local texture = Instance.new("ImageLabel", child)
-                texture.Image = themes[theme].Texture
-                texture.Size = UDim2.new(1, 0, 1, 0)
-                texture.BackgroundTransparency = themes[theme].Transparency or 0
-                texture.ZIndex = child.ZIndex - 1
-            end
-        end
-    end
-end
-
-function JimmysCoolLibrary:CreateHub(title, theme)
+function JimmysCoolLibrary:CreateHub(title)
     local screenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
     local mainFrame = Instance.new("Frame", screenGui)
     mainFrame.Size = UDim2.new(0, 600, 0, 400)
@@ -46,22 +10,59 @@ function JimmysCoolLibrary:CreateHub(title, theme)
     mainFrame.Active = true
     mainFrame.Draggable = true
 
-    local titleBar = Instance.new("TextLabel", mainFrame)
+    -- Title Bar
+    local titleBar = Instance.new("Frame", mainFrame)
     titleBar.Size = UDim2.new(1, 0, 0, 25)
+    titleBar.Position = UDim2.new(0, 0, 0, 0)
     titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     titleBar.BorderSizePixel = 0
-    titleBar.Text = title or "Hub"
-    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleBar.ZIndex = 2  -- Ensure title bar is on top
 
+    local titleLabel = Instance.new("TextLabel", titleBar)
+    titleLabel.Size = UDim2.new(1, -60, 1, 0)
+    titleLabel.Position = UDim2.new(0, 60, 0, 0)
+    titleLabel.Text = title or "Hub"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextSize = 18
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    -- Minimize Button
+    local minimizeButton = Instance.new("TextButton", titleBar)
+    minimizeButton.Size = UDim2.new(0, 25, 0, 25)
+    minimizeButton.Position = UDim2.new(1, -50, 0, 0)
+    minimizeButton.Text = "-"
+    minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    minimizeButton.BorderSizePixel = 0
+    minimizeButton.AutoButtonColor = false
+    minimizeButton.MouseButton1Click:Connect(function()
+        mainFrame.Visible = false
+    end)
+
+    -- Close Button
+    local closeButton = Instance.new("TextButton", titleBar)
+    closeButton.Size = UDim2.new(0, 25, 0, 25)
+    closeButton.Position = UDim2.new(1, -25, 0, 0)
+    closeButton.Text = "×"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    closeButton.BorderSizePixel = 0
+    closeButton.AutoButtonColor = false
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+
+    -- Tab Buttons Holder
     local tabButtonHolder = Instance.new("Frame", mainFrame)
-    tabButtonHolder.Size = UDim2.new(1, 0, 0, 30)
+    tabButtonHolder.Size = UDim2.new(0, 150, 1, 0)
+    tabButtonHolder.Position = UDim2.new(0, 0, 0, 25)
     tabButtonHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     tabButtonHolder.BorderSizePixel = 0
 
+    -- Tabs Holder
     local tabHolder = Instance.new("Frame", mainFrame)
-    tabHolder.Size = UDim2.new(1, -20, 1, -60)
-    tabHolder.Position = UDim2.new(0, 10, 0, 40)
+    tabHolder.Size = UDim2.new(1, -150, 1, -25)
+    tabHolder.Position = UDim2.new(0, 150, 0, 25)
     tabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     tabHolder.BorderSizePixel = 0
 
@@ -72,8 +73,8 @@ function JimmysCoolLibrary:CreateHub(title, theme)
 
         local tabButton = Instance.new("TextButton", self.tabButtonHolder)
         tabButton.Text = name
-        tabButton.Size = UDim2.new(0, 100, 0, 25)
-        tabButton.Position = UDim2.new(0, (tabIndex - 1) * 105, 0, 0)
+        tabButton.Size = UDim2.new(1, 0, 0, 50)
+        tabButton.Position = UDim2.new(0, 0, 0, (tabIndex - 1) * 55)
         tabButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
         tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         tabButton.BorderSizePixel = 0
@@ -163,13 +164,6 @@ function JimmysCoolLibrary:CreateHub(title, theme)
         end
 
         return tab
-    end
-
-    if theme then
-        if theme == "default" then
-            theme = "DarkTheme"
-        end
-        self:ApplyTheme(mainFrame, theme)
     end
 
     return window

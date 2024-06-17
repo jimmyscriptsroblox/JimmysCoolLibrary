@@ -21,13 +21,14 @@ function JimmysCoolLibrary:ApplyTheme(frame, theme)
     if theme and themes[theme] then
         frame.BackgroundColor3 = themes[theme].BackgroundColor3
         frame.BackgroundTransparency = themes[theme].Transparency or 0
-
+        
         if themes[theme].Texture then
-            local texture = Instance.new("ImageLabel", frame)
+            local texture = Instance.new("ImageLabel")
             texture.Image = themes[theme].Texture
             texture.Size = UDim2.new(1, 0, 1, 0)
-            texture.BackgroundTransparency = themes[theme].Transparency or 0
-            texture.ZIndex = -1
+            texture.BackgroundTransparency = 1
+            texture.ZIndex = frame.ZIndex + 1
+            texture.Parent = frame
         end
 
         for _, child in pairs(frame:GetDescendants()) do
@@ -54,15 +55,18 @@ function JimmysCoolLibrary:CreateHub(title, theme)
     titleBar.BorderSizePixel = 0
     titleBar.Text = title or "Hub"
     titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleBar.Font = Enum.Font.SourceSans
+    titleBar.TextSize = 20
 
     local tabButtonHolder = Instance.new("Frame", mainFrame)
     tabButtonHolder.Size = UDim2.new(1, 0, 0, 30)
+    tabButtonHolder.Position = UDim2.new(0, 0, 0, 25)
     tabButtonHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     tabButtonHolder.BorderSizePixel = 0
 
     local tabHolder = Instance.new("Frame", mainFrame)
     tabHolder.Size = UDim2.new(1, -20, 1, -60)
-    tabHolder.Position = UDim2.new(0, 10, 0, 40)
+    tabHolder.Position = UDim2.new(0, 10, 0, 55)
     tabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     tabHolder.BorderSizePixel = 0
 
@@ -132,7 +136,7 @@ function JimmysCoolLibrary:CreateHub(title, theme)
             local scroller = Instance.new("TextBox", self.scrollFrame)
             scroller.Text = "0"
             scroller.Size = UDim2.new(0, 300, 0, 30)
-            scroller.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            scroller.Position = UDim2.new(0.5, -150, 0, #self.elements * 60 + 30)
             scroller.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
             scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
             scroller.BorderSizePixel = 0
@@ -145,35 +149,3 @@ function JimmysCoolLibrary:CreateHub(title, theme)
         function tab:AddScrollerWalkspeed(scrollerText, callback)
             self:AddScroller(scrollerText, function(value)
                 game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
-                callback(value)
-            end)
-        end
-
-        function tab:AddScrollerJumppower(scrollerText, callback)
-            self:AddScroller(scrollerText, function(value)
-                game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
-                callback(value)
-            end)
-        end
-
-        self.tabs[tabIndex] = tab
-        if tabIndex == 1 then
-            tabScrollFrame.Visible = true
-        else
-            tabScrollFrame.Visible = false
-        end
-
-        return tab
-    end
-
-    if theme then
-        if theme == "default" then
-            theme = "DarkTheme"
-        end
-        self:ApplyTheme(mainFrame, theme)
-    end
-
-    return window
-end
-
-return JimmysCoolLibrary

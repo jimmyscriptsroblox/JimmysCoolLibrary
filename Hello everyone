@@ -132,7 +132,7 @@ function JimmysCoolLibrary:CreateHub(title)
             button.Text = buttonText
             button.Size = UDim2.new(1, -10, 0, 50)  -- Adjusted size to fit within scroll frame
             button.Position = UDim2.new(0, 5, 0, #self.elements * 60)
-            button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter grey
+            button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
             button.TextColor3 = Color3.fromRGB(255, 255, 255)
             button.BorderSizePixel = 0
             button.TextWrapped = true  -- Allow text to wrap within the button

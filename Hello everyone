@@ -12,7 +12,7 @@ function JimmysCoolLibrary:CreateHub(title)
 
     -- Title Bar
     local titleBar = Instance.new("Frame", mainFrame)
-    titleBar.Size = UDim2.new(1, 0, 0, 30)
+    titleBar.Size = UDim2.new(1, 0, 0, 25)
     titleBar.Position = UDim2.new(0, 0, 0, 0)
     titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     titleBar.BorderSizePixel = 0
@@ -28,26 +28,33 @@ function JimmysCoolLibrary:CreateHub(title)
 
     -- Minimize Button
     local minimizeButton = Instance.new("TextButton", titleBar)
-    minimizeButton.Size = UDim2.new(0, 30, 0, 30)
-    minimizeButton.Position = UDim2.new(1, -60, 0, 0)
+    minimizeButton.Size = UDim2.new(0, 30, 0, 25)
+    minimizeButton.Position = UDim2.new(1, -90, 0, 0)
     minimizeButton.Text = "-"
     minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     minimizeButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     minimizeButton.BorderSizePixel = 0
     minimizeButton.AutoButtonColor = false
+    local isMinimized = false
     minimizeButton.MouseButton1Click:Connect(function()
-        if mainFrame.Size.Y.Offset > 30 then
-            mainFrame.Size = UDim2.new(0, 600, 0, 30)
-            minimizeButton.Text = "+"
-        else
+        if isMinimized then
+            -- Restore the window
             mainFrame.Size = UDim2.new(0, 600, 0, 400)
             minimizeButton.Text = "-"
+            isMinimized = false
+            tabButtonHolder.Visible = true
+        else
+            -- Minimize the window
+            mainFrame.Size = UDim2.new(0, 600, 0, 25)
+            minimizeButton.Text = "+"
+            isMinimized = true
+            tabButtonHolder.Visible = false
         end
     end)
 
     -- Close Button
     local closeButton = Instance.new("TextButton", titleBar)
-    closeButton.Size = UDim2.new(0, 30, 0, 30)
+    closeButton.Size = UDim2.new(0, 30, 0, 25)
     closeButton.Position = UDim2.new(1, -30, 0, 0)
     closeButton.Text = "×"
     closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -58,22 +65,30 @@ function JimmysCoolLibrary:CreateHub(title)
         screenGui:Destroy()
     end)
 
+    -- Tab Buttons Holder
+    local tabButtonHolder = Instance.new("Frame", mainFrame)
+    tabButtonHolder.Size = UDim2.new(0, 150, 1, -25)
+    tabButtonHolder.Position = UDim2.new(0, 0, 0, 25)
+    tabButtonHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    tabButtonHolder.BorderSizePixel = 0
+    tabButtonHolder.Visible = true  -- Initially visible
+
     -- Tabs Holder
     local tabHolder = Instance.new("Frame", mainFrame)
-    tabHolder.Size = UDim2.new(1, 0, 1, -30)
-    tabHolder.Position = UDim2.new(0, 0, 0, 30)
+    tabHolder.Size = UDim2.new(1, -150, 1, -25)
+    tabHolder.Position = UDim2.new(0, 150, 0, 25)
     tabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     tabHolder.BorderSizePixel = 0
 
-    local window = {frame = mainFrame, tabs = {}, tabHolder = tabHolder}
+    local window = {frame = mainFrame, tabs = {}, tabButtonHolder = tabButtonHolder}
 
     function window:AddTab(name)
         local tabIndex = #self.tabs + 1
 
-        local tabButton = Instance.new("TextButton", mainFrame)
+        local tabButton = Instance.new("TextButton", self.tabButtonHolder)
         tabButton.Text = name
-        tabButton.Size = UDim2.new(0, 150, 0, 30)
-        tabButton.Position = UDim2.new(0, 0, 0, (tabIndex - 1) * 35 + 30)
+        tabButton.Size = UDim2.new(1, 0, 0, 50)
+        tabButton.Position = UDim2.new(0, 0, 0, (tabIndex - 1) * 55)
         tabButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
         tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         tabButton.BorderSizePixel = 0
@@ -156,7 +171,11 @@ function JimmysCoolLibrary:CreateHub(title)
         end
 
         self.tabs[tabIndex] = tab
-        tabScrollFrame.Visible = (tabIndex == 1)  -- Show the first tab by default
+        if tabIndex == 1 then
+            tabScrollFrame.Visible = true
+        else
+            tabScrollFrame.Visible = false
+        end
 
         return tab
     end

@@ -100,6 +100,7 @@ function JimmysCoolLibrary:CreateHub(title)
         tabScrollFrame.BorderSizePixel = 0
         tabScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
         tabScrollFrame.ScrollBarThickness = 10
+        tabScrollFrame.Visible = false  -- Initially hidden
 
         tabButton.MouseButton1Click:Connect(function()
             for _, tab in pairs(self.tabs) do
@@ -113,47 +114,62 @@ function JimmysCoolLibrary:CreateHub(title)
         function tab:AddText(content)
             local textLabel = Instance.new("TextLabel", self.scrollFrame)
             textLabel.Text = content
-            textLabel.Size = UDim2.new(0, 300, 0, 50)
-            textLabel.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            textLabel.Size = UDim2.new(1, -10, 0, 50)  -- Adjusted size to fit within scroll frame
+            textLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
             textLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
             textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             textLabel.BorderSizePixel = 0
+            textLabel.TextWrapped = true  -- Allow text to wrap within the label
+            textLabel.TextXAlignment = Enum.TextXAlignment.Left
             table.insert(self.elements, textLabel)
+
+            -- Update the canvas size to fit all elements
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
         function tab:AddButton(buttonText, callback)
             local button = Instance.new("TextButton", self.scrollFrame)
             button.Text = buttonText
-            button.Size = UDim2.new(0, 300, 0, 50)
-            button.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            button.Size = UDim2.new(1, -10, 0, 50)  -- Adjusted size to fit within scroll frame
+            button.Position = UDim2.new(0, 5, 0, #self.elements * 60)
             button.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
             button.TextColor3 = Color3.fromRGB(255, 255, 255)
             button.BorderSizePixel = 0
+            button.TextWrapped = true  -- Allow text to wrap within the button
+            button.AutoButtonColor = false
             button.MouseButton1Click:Connect(callback)
             table.insert(self.elements, button)
+
+            -- Update the canvas size to fit all elements
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
         function tab:AddScroller(scrollerText, callback)
             local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
             scrollerLabel.Text = scrollerText
-            scrollerLabel.Size = UDim2.new(0, 300, 0, 30)
-            scrollerLabel.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            scrollerLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
             scrollerLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
             scrollerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             scrollerLabel.BorderSizePixel = 0
+            scrollerLabel.TextWrapped = true  -- Allow text to wrap within the label
             table.insert(self.elements, scrollerLabel)
 
             local scroller = Instance.new("TextBox", self.scrollFrame)
             scroller.Text = "0"
-            scroller.Size = UDim2.new(0, 300, 0, 30)
-            scroller.Position = UDim2.new(0.5, -150, 0, #self.elements * 60)
+            scroller.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            scroller.Position = UDim2.new(0, 5, 0, #self.elements * 60)
             scroller.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
             scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
             scroller.BorderSizePixel = 0
+            scroller.TextWrapped = true  -- Allow text to wrap within the text box
             scroller.FocusLost:Connect(function()
                 callback(tonumber(scroller.Text))
             end)
             table.insert(self.elements, scroller)
+
+            -- Update the canvas size to fit all elements
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
         function tab:AddScrollerWalkspeed(scrollerText, callback)
@@ -173,8 +189,6 @@ function JimmysCoolLibrary:CreateHub(title)
         self.tabs[tabIndex] = tab
         if tabIndex == 1 then
             tabScrollFrame.Visible = true
-        else
-            tabScrollFrame.Visible = false
         end
 
         return tab

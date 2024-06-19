@@ -243,32 +243,3 @@ end
 
 return JimmysCoolLibrary
 
-local JimmysCoolLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/jimmyscriptsroblox/JimmysCoolLibrary/main/Hello%20everyone", true))()
-
-local window = JimmysCoolLibrary:CreateHub("Example Hub")
-
-window:SendNotification("rbxassetid://123456789", "Notification Title", "This is a description of the notification.", 3)
-
-local tab1 = window:AddTab("First Tab")
-
-tab1:AddText("Welcome to the first tab!")
-
-tab1:AddButton("Click me!", function()
-    print("Button clicked!")
-end)
-
-tab1:AddScrollerWalkspeed("Set Walkspeed", function(value)
-    print("Walkspeed set to: " .. value)
-end)
-
-tab1:AddScrollerJumppower("Set Jumppower", function(value)
-    print("Jumppower set to: " .. value)
-end)
-
-local tab2 = window:AddTab("Second Tab")
-
-tab2:AddText("This is the second tab.")
-
-tab2:AddButton("Click me too!", function()
-    print("Button clicked on tab 2!")
-end)

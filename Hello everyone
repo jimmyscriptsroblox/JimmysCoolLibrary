@@ -237,6 +237,13 @@ function JimmysCoolLibrary:SendNotification(iconId, title, description, duration
     descriptionLabel.TextWrapped = true
     descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
 
+    -- Bring notification to the front
+    notificationGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    notificationFrame.ZIndex = 10
+    iconImage.ZIndex = 11
+    titleLabel.ZIndex = 11
+    descriptionLabel.ZIndex = 11
+
     wait(duration)
     notificationGui:Destroy()
 end

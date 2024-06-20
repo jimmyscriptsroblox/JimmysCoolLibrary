@@ -170,7 +170,7 @@ function JimmysCoolLibrary:CreateHub(title)
             scroller.TextWrapped = true  -- Allow text to wrap within the text box
             scroller.TextXAlignment = Enum.TextXAlignment.Left
             scroller.FocusLost:Connect(function()
-                callback(tonumber(scroller.Text))
+                callback(tonumber(scroller.Text) or 0)
             end)
             table.insert(self.elements, scroller)
 
@@ -178,70 +178,38 @@ function JimmysCoolLibrary:CreateHub(title)
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 60)
         end
 
-        function tab:AddScrollerWalkspeed(scrollerText, callback)
-            self:AddScroller(scrollerText, function(value)
-                game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
-                callback(value)
-            end)
-        end
-
-        function tab:AddScrollerJumppower(scrollerText, callback)
-            self:AddScroller(scrollerText, function(value)
-                game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
-                callback(value)
-            end)
-        end
-
         function tab:AddScrollerPlayername(scrollerText, callback)
-            self:AddScroller(scrollerText, function(playerName)
-                callback(playerName)
+            local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
+            scrollerLabel.Text = scrollerText
+            scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            scrollerLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
+            scrollerLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            scrollerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            scrollerLabel.BorderSizePixel = 0
+            scrollerLabel.TextWrapped = true  -- Allow text to wrap within the label
+            scrollerLabel.TextXAlignment = Enum.TextXAlignment.Left
+            table.insert(self.elements, scrollerLabel)
+
+            local scroller = Instance.new("TextBox", self.scrollFrame)
+            scroller.Text = ""
+            scroller.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            scroller.Position = UDim2.new(0, 5, 0, #self.elements * 60 + 30)
+            scroller.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+            scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
+            scroller.BorderSizePixel = 0
+            scroller.TextWrapped = true  -- Allow text to wrap within the text box
+            scroller.TextXAlignment = Enum.TextXAlignment.Left
+            scroller.FocusLost:Connect(function()
+                callback(scroller.Text)
             end)
+            table.insert(self.elements, scroller)
+
+            -- Update the canvas size to fit all elements
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 60)
         end
 
-        self.tabs[tabIndex] = tab
-        if tabIndex == 1 then
-            tabScrollFrame.Visible = true
-        end
-
+        table.insert(self.tabs, tab)
         return tab
-    end
-
-    function window:SendNotification(iconId, title, description, duration)
-        local notification = Instance.new("Frame", screenGui)
-        notification.Size = UDim2.new(0, 300, 0, 100)
-        notification.Position = UDim2.new(0.5, -150, 0.1, 0)
-        notification.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-        notification.BorderSizePixel = 0
-        notification.AnchorPoint = Vector2.new(0.5, 0)
-
-        local icon = Instance.new("ImageLabel", notification)
-        icon.Size = UDim2.new(0, 50, 0, 50)
-        icon.Position = UDim2.new(0, 10, 0, 25)
-        icon.BackgroundTransparency = 1
-        icon.Image = iconId
-
-        local titleLabel = Instance.new("TextLabel", notification)
-        titleLabel.Size = UDim2.new(0, 200, 0, 25)
-        titleLabel.Position = UDim2.new(0, 70, 0, 10)
-        titleLabel.Text = title
-        titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        titleLabel.BackgroundTransparency = 1
-        titleLabel.TextSize = 18
-        titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-        local descriptionLabel = Instance.new("TextLabel", notification)
-        descriptionLabel.Size = UDim2.new(0, 200, 0, 50)
-        descriptionLabel.Position = UDim2.new(0, 70, 0, 35)
-        descriptionLabel.Text = description
-        descriptionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        descriptionLabel.BackgroundTransparency = 1
-        descriptionLabel.TextSize = 14
-        descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-        descriptionLabel.TextWrapped = true
-
-        delay(duration, function()
-            notification:Destroy()
-        end)
     end
 
     return window

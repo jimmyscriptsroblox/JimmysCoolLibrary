@@ -13,7 +13,7 @@ function JimmysCoolLibrary:CreateHub(title)
 
     local mainFrameCorner = Instance.new("UICorner", mainFrame)
     mainFrameCorner.CornerRadius = UDim.new(0, 20)
-    
+
     -- Title Bar
     local titleBar = Instance.new("Frame", mainFrame)
     titleBar.Size = UDim2.new(1, 0, 0, 25)
@@ -23,56 +23,6 @@ function JimmysCoolLibrary:CreateHub(title)
     
     local titleBarCorner = Instance.new("UICorner", titleBar)
     titleBarCorner.CornerRadius = UDim.new(0, 20)
-    
-    local titleLabel = Instance.new("TextLabel", titleBar)
-    titleLabel.Size = UDim2.new(1, -60, 1, 0)
-    titleLabel.Position = UDim2.new(0, 60, 0, 0)
-    titleLabel.Text = title or "Hub"
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.TextSize = 18
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-    -- Minimize Button
-    local minimizeButton = Instance.new("TextButton", titleBar)
-    minimizeButton.Size = UDim2.new(0, 30, 0, 25)
-    minimizeButton.Position = UDim2.new(1, -90, 0, 0)
-    minimizeButton.Text = "-"
-    minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    minimizeButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    minimizeButton.BorderSizePixel = 0
-    minimizeButton.AutoButtonColor = false
-    minimizeButton.TextXAlignment = Enum.TextXAlignment.Left
-    local isMinimized = false
-    minimizeButton.MouseButton1Click:Connect(function()
-        if isMinimized then
-            -- Restore the window
-            mainFrame.Size = UDim2.new(0, 600, 0, 400)
-            minimizeButton.Text = "-"
-            isMinimized = false
-            tabButtonHolder.Visible = true
-        else
-            -- Minimize the window
-            mainFrame.Size = UDim2.new(0, 600, 0, 25)
-            minimizeButton.Text = "+"
-            isMinimized = true
-            tabButtonHolder.Visible = false
-        end
-    end)
-
-    -- Close Button
-    local closeButton = Instance.new("TextButton", titleBar)
-    closeButton.Size = UDim2.new(0, 30, 0, 25)
-    closeButton.Position = UDim2.new(1, -30, 0, 0)
-    closeButton.Text = "×"
-    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    closeButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    closeButton.BorderSizePixel = 0
-    closeButton.AutoButtonColor = false
-    closeButton.TextXAlignment = Enum.TextXAlignment.Left
-    closeButton.MouseButton1Click:Connect(function()
-        screenGui:Destroy()
-    end)
 
     -- Tab Buttons Holder
     local tabButtonHolder = Instance.new("Frame", mainFrame)
@@ -80,17 +30,9 @@ function JimmysCoolLibrary:CreateHub(title)
     tabButtonHolder.Position = UDim2.new(0, 0, 0, 25)
     tabButtonHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     tabButtonHolder.BorderSizePixel = 0
-    tabButtonHolder.Visible = true  -- Initially visible
     
     local tabButtonHolderCorner = Instance.new("UICorner", tabButtonHolder)
     tabButtonHolderCorner.CornerRadius = UDim.new(0, 20)
-
-    -- Tabs Holder
-    local tabHolder = Instance.new("Frame", mainFrame)
-    tabHolder.Size = UDim2.new(1, -150, 1, -25)
-    tabHolder.Position = UDim2.new(0, 150, 0, 25)
-    tabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    tabHolder.BorderSizePixel = 0
 
     local window = {frame = mainFrame, tabs = {}, tabButtonHolder = tabButtonHolder}
 
@@ -106,9 +48,9 @@ function JimmysCoolLibrary:CreateHub(title)
         tabButton.BorderSizePixel = 0
         tabButton.TextXAlignment = Enum.TextXAlignment.Left
 
-        local tabScrollFrame = Instance.new("ScrollingFrame", tabHolder)
-        tabScrollFrame.Size = UDim2.new(1, 0, 1, 0)
-        tabScrollFrame.Position = UDim2.new(0, 0, 0, 0)
+        local tabScrollFrame = Instance.new("ScrollingFrame", mainFrame)
+        tabScrollFrame.Size = UDim2.new(1, -150, 1, -25)
+        tabScrollFrame.Position = UDim2.new(0, 150, 0, 25)
         tabScrollFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         tabScrollFrame.BorderSizePixel = 0
         tabScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)

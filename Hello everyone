@@ -2,6 +2,7 @@ local JimmysCoolLibrary = {}
 
 function JimmysCoolLibrary:CreateHub(title)
     local screenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+    
     local mainFrame = Instance.new("Frame", screenGui)
     mainFrame.Size = UDim2.new(0, 600, 0, 400)
     mainFrame.Position = UDim2.new(0.5, -300, 0.5, -200)
@@ -10,13 +11,19 @@ function JimmysCoolLibrary:CreateHub(title)
     mainFrame.Active = true
     mainFrame.Draggable = true
 
+    local mainFrameCorner = Instance.new("UICorner", mainFrame)
+    mainFrameCorner.CornerRadius = UDim.new(0, 20)
+    
     -- Title Bar
     local titleBar = Instance.new("Frame", mainFrame)
     titleBar.Size = UDim2.new(1, 0, 0, 25)
     titleBar.Position = UDim2.new(0, 0, 0, 0)
     titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     titleBar.BorderSizePixel = 0
-
+    
+    local titleBarCorner = Instance.new("UICorner", titleBar)
+    titleBarCorner.CornerRadius = UDim.new(0, 20)
+    
     local titleLabel = Instance.new("TextLabel", titleBar)
     titleLabel.Size = UDim2.new(1, -60, 1, 0)
     titleLabel.Position = UDim2.new(0, 60, 0, 0)
@@ -74,6 +81,9 @@ function JimmysCoolLibrary:CreateHub(title)
     tabButtonHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     tabButtonHolder.BorderSizePixel = 0
     tabButtonHolder.Visible = true  -- Initially visible
+    
+    local tabButtonHolderCorner = Instance.new("UICorner", tabButtonHolder)
+    tabButtonHolderCorner.CornerRadius = UDim.new(0, 20)
 
     -- Tabs Holder
     local tabHolder = Instance.new("Frame", mainFrame)

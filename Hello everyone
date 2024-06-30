@@ -107,6 +107,7 @@ function JimmysCoolLibrary:CreateHub(title)
         tabScrollFrame.Visible = false  -- Initially hidden
 
         tabButton.MouseButton1Click:Connect(function()
+            print("Tab button clicked: " .. name)
             for _, tab in pairs(self.tabs) do
                 tab.scrollFrame.Visible = false
             end
@@ -219,6 +220,13 @@ function JimmysCoolLibrary:CreateHub(title)
         end
 
         table.insert(self.tabs, tab)
+
+        -- Make the first tab visible by default
+        if tabIndex == 1 then
+            tabScrollFrame.Visible = true
+        end
+
+        return tab
     end
 
     return window

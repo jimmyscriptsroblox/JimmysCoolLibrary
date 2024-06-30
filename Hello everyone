@@ -107,6 +107,7 @@ function JimmysCoolLibrary:CreateHub(title)
         tabScrollFrame.Visible = false  -- Initially hidden
 
         tabButton.MouseButton1Click:Connect(function()
+            print("Tab button clicked: " .. name)
             for _, tab in pairs(self.tabs) do
                 tab.scrollFrame.Visible = false
             end
@@ -218,7 +219,7 @@ function JimmysCoolLibrary:CreateHub(title)
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 30)
         end
 
-        function tab:AddScrollerWalkspeed(scrollerText, callback)
+        function tab:AddScrollerWalkSpeed(scrollerText, callback)
             local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
             scrollerLabel.Text = scrollerText
             scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
@@ -241,7 +242,12 @@ function JimmysCoolLibrary:CreateHub(title)
             scroller.TextXAlignment = Enum.TextXAlignment.Left
             scroller.FocusLost:Connect(function(enterPressed)
                 if enterPressed then
-                    callback(tonumber(scroller.Text) or 16)
+                    local speed = tonumber(scroller.Text)
+                    if speed then
+                        callback(speed)
+                    else
+                        warn("Invalid WalkSpeed: " .. scroller.Text)
+                    end
                 end
             end)
             table.insert(self.elements, scroller)
@@ -250,7 +256,7 @@ function JimmysCoolLibrary:CreateHub(title)
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 30)
         end
 
-        function tab:AddScrollerJumppower(scrollerText, callback)
+        function tab:AddScrollerJumpPower(scrollerText, callback)
             local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
             scrollerLabel.Text = scrollerText
             scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
@@ -273,7 +279,12 @@ function JimmysCoolLibrary:CreateHub(title)
             scroller.TextXAlignment = Enum.TextXAlignment.Left
             scroller.FocusLost:Connect(function(enterPressed)
                 if enterPressed then
-                    callback(tonumber(scroller.Text) or 50)
+                    local power = tonumber(scroller.Text)
+                    if power then
+                        callback(power)
+                    else
+                        warn("Invalid JumpPower: " .. scroller.Text)
+                    end
                 end
             end)
             table.insert(self.elements, scroller)
@@ -283,6 +294,13 @@ function JimmysCoolLibrary:CreateHub(title)
         end
 
         table.insert(self.tabs, tab)
+
+        -- Make the first tab visible by default
+        if tabIndex == 1 then
+            tabScrollFrame.Visible = true
+        end
+
+        return tab
     end
 
     return window

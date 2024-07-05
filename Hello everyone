@@ -215,7 +215,7 @@ function JimmysCoolLibrary:CreateHub(title)
             label.TextWrapped = true
             label.TextXAlignment = Enum.TextXAlignment.Left
 
-            local inputBox = Instance.new("TextBox", self.scrollFrame)
+            local inputBox = Instance.new("✏️input✏️", self.scrollFrame)
             inputBox.Size = UDim2.new(1, -10, 0, 50)
             inputBox.Position = UDim2.new(0, 5, 0, (#self.elements + 1) * 60)
             inputBox.BackgroundColor3 = Color3.fromRGB(55, 55, 55)

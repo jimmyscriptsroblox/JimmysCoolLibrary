@@ -150,156 +150,130 @@ function JimmysCoolLibrary:CreateHub(title)
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
-        function tab:AddScroller(scrollerText, callback)
-            local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
-            scrollerLabel.Text = scrollerText
-            scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
-            scrollerLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
-            scrollerLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-            scrollerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scrollerLabel.BorderSizePixel = 0
-            scrollerLabel.TextWrapped = true  -- Allow text to wrap within the label
-            scrollerLabel.TextXAlignment = Enum.TextXAlignment.Left
-            table.insert(self.elements, scrollerLabel)
+        function tab:AddInput(inputText, callback)
+            local inputLabel = Instance.new("TextLabel", self.scrollFrame)
+            inputLabel.Text = inputText
+            inputLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            inputLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
+            inputLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            inputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            inputLabel.BorderSizePixel = 0
+            inputLabel.TextWrapped = true  -- Allow text to wrap within the label
+            inputLabel.TextXAlignment = Enum.TextXAlignment.Left
+            table.insert(self.elements, inputLabel)
 
-            local scroller = Instance.new("TextBox", self.scrollFrame)
-            scroller.Text = ""
-            scroller.Size = UDim2.new(1, -10, 0, 50)  -- Adjusted size to fit within scroll frame
-            scroller.Position = UDim2.new(0, 5, 0, (#self.elements - 1) * 60 + 30)
-            scroller.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
-            scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scroller.BorderSizePixel = 0
-            scroller.TextWrapped = true  -- Allow text to wrap within the scroller
-            scroller.TextXAlignment = Enum.TextXAlignment.Left
-            scroller.FocusLost:Connect(function(enterPressed)
+            local input = Instance.new("TextBox", self.scrollFrame)
+            input.Text = ""
+            input.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            input.Position = UDim2.new(0, 5, 0, (#self.elements - 1) * 60 + 30)
+            input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
+            input.TextColor3 = Color3.fromRGB(255, 255, 255)
+            input.BorderSizePixel = 0
+            input.ClearTextOnFocus = false
+            input.TextWrapped = true  -- Allow text to wrap within the input box
+            input.TextXAlignment = Enum.TextXAlignment.Left
+            input.FocusLost:Connect(function(enterPressed)
                 if enterPressed then
-                    callback(scroller.Text)
+                    callback(input.Text)
                 end
             end)
-            table.insert(self.elements, scroller)
+            table.insert(self.elements, input)
 
             -- Update the canvas size to fit all elements
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 30)
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
-        function tab:AddScrollerPlayername(scrollerText, callback)
-            local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
-            scrollerLabel.Text = scrollerText
-            scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
-            scrollerLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
-            scrollerLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-            scrollerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scrollerLabel.BorderSizePixel = 0
-            scrollerLabel.TextWrapped = true  -- Allow text to wrap within the label
-            scrollerLabel.TextXAlignment = Enum.TextXAlignment.Left
-            table.insert(self.elements, scrollerLabel)
+        function tab:AddList(listItems, callback)
+            local listLabel = Instance.new("TextLabel", self.scrollFrame)
+            listLabel.Text = "Select an option"
+            listLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            listLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
+            listLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            listLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            listLabel.BorderSizePixel = 0
+            listLabel.TextWrapped = true  -- Allow text to wrap within the label
+            listLabel.TextXAlignment = Enum.TextXAlignment.Left
+            table.insert(self.elements, listLabel)
 
-            local scroller = Instance.new("TextBox", self.scrollFrame)
-            scroller.Text = ""
-            scroller.Size = UDim2.new(1, -10, 0, 50)  -- Adjusted size to fit within scroll frame
-            scroller.Position = UDim2.new(0, 5, 0, (#self.elements - 1) * 60 + 30)
-            scroller.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
-            scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scroller.BorderSizePixel = 0
-            scroller.TextWrapped = true  -- Allow text to wrap within the scroller
-            scroller.TextXAlignment = Enum.TextXAlignment.Left
-            scroller.FocusLost:Connect(function(enterPressed)
-                if enterPressed then
-                    local player = game.Players:FindFirstChild(scroller.Text)
-                    if player then
-                        callback(player.Name)
-                    else
-                        warn("Player not found: " .. scroller.Text)
+            local dropDown = Instance.new("Frame", self.scrollFrame)
+            dropDown.Size = UDim2.new(1, -10, 0, 30)
+            dropDown.Position = UDim2.new(0, 5, 0, (#self.elements - 1) * 60 + 30)
+            dropDown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
+            dropDown.BorderSizePixel = 0
+            table.insert(self.elements, dropDown)
+
+            local dropDownButton = Instance.new("TextButton", dropDown)
+            dropDownButton.Text = "Select"
+            dropDownButton.Size = UDim2.new(1, 0, 1, 0)
+            dropDownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropDownButton.BackgroundTransparency = 1
+            dropDownButton.MouseButton1Click:Connect(function()
+                for _, item in pairs(dropDown:GetChildren()) do
+                    if item:IsA("TextButton") and item ~= dropDownButton then
+                        item.Visible = not item.Visible
                     end
                 end
             end)
-            table.insert(self.elements, scroller)
+
+            for _, item in pairs(listItems) do
+                local listItem = Instance.new("TextButton", dropDown)
+                listItem.Text = item
+                listItem.Size = UDim2.new(1, 0, 0, 30)
+                listItem.Position = UDim2.new(0, 0, 0, #dropDown:GetChildren() * 30)
+                listItem.TextColor3 = Color3.fromRGB(255, 255, 255)
+                listItem.BackgroundTransparency = 1
+                listItem.Visible = false
+                listItem.MouseButton1Click:Connect(function()
+                    dropDownButton.Text = item
+                    for _, otherItem in pairs(dropDown:GetChildren()) do
+                        if otherItem:IsA("TextButton") and otherItem ~= dropDownButton then
+                            otherItem.Visible = false
+                        end
+                    end
+                    callback(item)
+                end)
+            end
 
             -- Update the canvas size to fit all elements
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 30)
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
-        function tab:AddScrollerWalkSpeed(scrollerText, callback)
-            local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
-            scrollerLabel.Text = scrollerText
-            scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
-            scrollerLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
-            scrollerLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-            scrollerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scrollerLabel.BorderSizePixel = 0
-            scrollerLabel.TextWrapped = true  -- Allow text to wrap within the label
-            scrollerLabel.TextXAlignment = Enum.TextXAlignment.Left
-            table.insert(self.elements, scrollerLabel)
+        function tab:AddSlider(sliderText, minValue, maxValue, callback)
+            local sliderLabel = Instance.new("TextLabel", self.scrollFrame)
+            sliderLabel.Text = sliderText
+            sliderLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            sliderLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
+            sliderLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            sliderLabel.BorderSizePixel = 0
+            sliderLabel.TextWrapped = true  -- Allow text to wrap within the label
+            sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+            table.insert(self.elements, sliderLabel)
 
-            local scroller = Instance.new("TextBox", self.scrollFrame)
-            scroller.Text = ""
-            scroller.Size = UDim2.new(1, -10, 0, 50)  -- Adjusted size to fit within scroll frame
-            scroller.Position = UDim2.new(0, 5, 0, (#self.elements - 1) * 60 + 30)
-            scroller.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
-            scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scroller.BorderSizePixel = 0
-            scroller.TextWrapped = true  -- Allow text to wrap within the scroller
-            scroller.TextXAlignment = Enum.TextXAlignment.Left
-            scroller.FocusLost:Connect(function(enterPressed)
-                if enterPressed then
-                    local speed = tonumber(scroller.Text)
-                    if speed then
-                        callback(speed)
-                    else
-                        warn("Invalid WalkSpeed: " .. scroller.Text)
-                    end
-                end
+            local sliderFrame = Instance.new("Frame", self.scrollFrame)
+            sliderFrame.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
+            sliderFrame.Position = UDim2.new(0, 5, 0, (#self.elements - 1) * 60 + 30)
+            sliderFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
+            sliderFrame.BorderSizePixel = 0
+            table.insert(self.elements, sliderFrame)
+
+            local slider = Instance.new("Slider", sliderFrame)
+            slider.Size = UDim2.new(1, 0, 1, 0)
+            slider.Position = UDim2.new(0, 0, 0, 0)
+            slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            slider.BorderSizePixel = 0
+            slider.MinValue = minValue
+            slider.MaxValue = maxValue
+            slider.Value = minValue
+            slider.MouseButton1Up:Connect(function()
+                callback(slider.Value)
             end)
-            table.insert(self.elements, scroller)
 
             -- Update the canvas size to fit all elements
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 30)
-        end
-
-        function tab:AddScrollerJumpPower(scrollerText, callback)
-            local scrollerLabel = Instance.new("TextLabel", self.scrollFrame)
-            scrollerLabel.Text = scrollerText
-            scrollerLabel.Size = UDim2.new(1, -10, 0, 30)  -- Adjusted size to fit within scroll frame
-            scrollerLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
-            scrollerLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-            scrollerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scrollerLabel.BorderSizePixel = 0
-            scrollerLabel.TextWrapped = true  -- Allow text to wrap within the label
-            scrollerLabel.TextXAlignment = Enum.TextXAlignment.Left
-            table.insert(self.elements, scrollerLabel)
-
-            local scroller = Instance.new("TextBox", self.scrollFrame)
-            scroller.Text = ""
-            scroller.Size = UDim2.new(1, -10, 0, 50)  -- Adjusted size to fit within scroll frame
-            scroller.Position = UDim2.new(0, 5, 0, (#self.elements - 1) * 60 + 30)
-            scroller.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Slightly lighter than the text label
-            scroller.TextColor3 = Color3.fromRGB(255, 255, 255)
-            scroller.BorderSizePixel = 0
-            scroller.TextWrapped = true  -- Allow text to wrap within the scroller
-            scroller.TextXAlignment = Enum.TextXAlignment.Left
-            scroller.FocusLost:Connect(function(enterPressed)
-                if enterPressed then
-                    local power = tonumber(scroller.Text)
-                    if power then
-                        callback(power)
-                    else
-                        warn("Invalid JumpPower: " .. scroller.Text)
-                    end
-                end
-            end)
-            table.insert(self.elements, scroller)
-
-            -- Update the canvas size to fit all elements
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60 + 30)
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
         table.insert(self.tabs, tab)
-
-        -- Make the first tab visible by default
-        if tabIndex == 1 then
-            tabScrollFrame.Visible = true
-        end
-
         return tab
     end
 

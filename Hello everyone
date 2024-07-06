@@ -107,7 +107,6 @@ function JimmysCoolLibrary:CreateHub(title)
         tabScrollFrame.Visible = false  -- Initially hidden
 
         tabButton.MouseButton1Click:Connect(function()
-            print("Tab button clicked: " .. name)
             for _, tab in pairs(self.tabs) do
                 tab.scrollFrame.Visible = false
             end
@@ -170,6 +169,7 @@ function JimmysCoolLibrary:CreateHub(title)
             toggleButton.BorderSizePixel = 0
             toggleButton.TextXAlignment = Enum.TextXAlignment.Center
 
+            local listItems = {}
             local isExpanded = false
             toggleButton.MouseButton1Click:Connect(function()
                 if isExpanded then
@@ -181,16 +181,20 @@ function JimmysCoolLibrary:CreateHub(title)
                     toggleButton.Text = "+"
                 else
                     for i, itemText in ipairs(items) do
-                        local itemLabel = Instance.new("TextLabel", self.scrollFrame)
-                        itemLabel.Text = itemText
-                        itemLabel.Size = UDim2.new(1, -10, 0, 50)
-                        itemLabel.Position = UDim2.new(0, 5, 0, (#self.elements + i) * 60)
-                        itemLabel.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
-                        itemLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                        itemLabel.BorderSizePixel = 0
-                        itemLabel.TextWrapped = true
-                        itemLabel.TextXAlignment = Enum.TextXAlignment.Left
-                        table.insert(listItems, itemLabel)
+                        local itemButton = Instance.new("TextButton", self.scrollFrame)
+                        itemButton.Text = itemText
+                        itemButton.Size = UDim2.new(1, -10, 0, 50)
+                        itemButton.Position = UDim2.new(0, 5, 0, (#self.elements + i) * 60)
+                        itemButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+                        itemButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        itemButton.BorderSizePixel = 0
+                        itemButton.TextWrapped = true
+                        itemButton.TextXAlignment = Enum.TextXAlignment.Left
+                        table.insert(listItems, itemButton)
+
+                        itemButton.MouseButton1Click:Connect(function()
+                            print(itemText .. " button clicked")
+                        end)
                     end
                     isExpanded = true
                     toggleButton.Text = "-"
@@ -266,7 +270,8 @@ function JimmysCoolLibrary:CreateHub(title)
             sliderButton.Text = ""
 
             local function updateSlider(input)
-                local sliderSize = math.clamp(input.Position.X.Scale, 0, 1)
+                local relativePos = (input.Position.X - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X
+                local sliderSize = math.clamp(relativePos, 0, 1)
                 sliderButton.Position = UDim2.new(sliderSize, -10, 0, 0)
                 sliderBar.Size = UDim2.new(sliderSize, 0, 1, 0)
                 local value = math.floor(min + (sliderSize * (max - min)))
@@ -274,16 +279,18 @@ function JimmysCoolLibrary:CreateHub(title)
             end
 
             sliderButton.MouseButton1Down:Connect(function()
-                updateSlider(game:GetService("UserInputService"):GetMouseLocation())
-                local connection
-                connection = game:GetService("UserInputService").InputChanged:Connect(function(input)
+                local moveConnection, releaseConnection
+
+                moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseMovement then
                         updateSlider(input)
                     end
                 end)
-                game:GetService("UserInputService").InputEnded:Connect(function(input)
+
+                releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        connection:Disconnect()
+                        moveConnection:Disconnect()
+                        releaseConnection:Disconnect()
                     end
                 end)
             end)

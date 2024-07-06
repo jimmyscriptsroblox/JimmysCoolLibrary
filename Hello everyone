@@ -149,7 +149,7 @@ function JimmysCoolLibrary:CreateHub(title)
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
         end
 
-        function tab:AddList(listText, items)
+        function tab:AddList(listText, items, callback)
             local listLabel = Instance.new("TextLabel", self.scrollFrame)
             listLabel.Text = listText
             listLabel.Size = UDim2.new(1, -10, 0, 50)
@@ -171,11 +171,13 @@ function JimmysCoolLibrary:CreateHub(title)
 
             local listItems = {}
             local isExpanded = false
+            local originalHeight = listLabel.Size.Y.Offset
             toggleButton.MouseButton1Click:Connect(function()
                 if isExpanded then
                     for _, item in ipairs(listItems) do
                         item:Destroy()
                     end
+                    listLabel.Size = UDim2.new(1, -10, 0, originalHeight)
                     listItems = {}
                     isExpanded = false
                     toggleButton.Text = "+"
@@ -193,9 +195,10 @@ function JimmysCoolLibrary:CreateHub(title)
                         table.insert(listItems, itemButton)
 
                         itemButton.MouseButton1Click:Connect(function()
-                            print(itemText .. " button clicked")
+                            callback(itemText)
                         end)
                     end
+                    listLabel.Size = UDim2.new(1, -10, 0, originalHeight + (#items * 60))
                     isExpanded = true
                     toggleButton.Text = "-"
                 end
@@ -205,110 +208,10 @@ function JimmysCoolLibrary:CreateHub(title)
             table.insert(self.elements, toggleButton)
 
             -- Update the canvas size to fit all elements
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
-        end
-
-        function tab:AddInput(labelText, callback)
-            local label = Instance.new("TextLabel", self.scrollFrame)
-            label.Text = labelText
-            label.Size = UDim2.new(1, -10, 0, 50)
-            label.Position = UDim2.new(0, 5, 0, #self.elements * 60)
-            label.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-            label.TextColor3 = Color3.fromRGB(255, 255, 255)
-            label.BorderSizePixel = 0
-            label.TextWrapped = true
-            label.TextXAlignment = Enum.TextXAlignment.Left
-
-            local inputBox = Instance.new("TextBox", self.scrollFrame)
-            inputBox.Size = UDim2.new(1, -10, 0, 50)
-            inputBox.Position = UDim2.new(0, 5, 0, (#self.elements + 1) * 60)
-            inputBox.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
-            inputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-            inputBox.BorderSizePixel = 0
-            inputBox.PlaceholderText = "Enter text here..."
-            inputBox.FocusLost:Connect(function(enterPressed)
-                if enterPressed then
-                    callback(inputBox.Text)
-                end
-            end)
-
-            table.insert(self.elements, label)
-            table.insert(self.elements, inputBox)
-
-            -- Update the canvas size to fit all elements
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 60)
-        end
-
-        function tab:AddSlider(sliderText, min, max, callback)
-            local sliderLabel = Instance.new("TextLabel", self.scrollFrame)
-            sliderLabel.Text = sliderText
-            sliderLabel.Size = UDim2.new(1, -10, 0, 50)
-            sliderLabel.Position = UDim2.new(0, 5, 0, #self.elements * 60)
-            sliderLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-            sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            sliderLabel.BorderSizePixel = 0
-            sliderLabel.TextWrapped = true
-            sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-            local sliderFrame = Instance.new("Frame", self.scrollFrame)
-            sliderFrame.Size = UDim2.new(1, -10, 0, 50)
-            sliderFrame.Position = UDim2.new(0, 5, 0, (#self.elements + 1) * 60)
-            sliderFrame.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
-            sliderFrame.BorderSizePixel = 0
-
-            local sliderBar = Instance.new("Frame", sliderFrame)
-            sliderBar.Size = UDim2.new(0, 0, 1, 0)
-            sliderBar.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-            sliderBar.BorderSizePixel = 0
-
-            local sliderButton = Instance.new("TextButton", sliderFrame)
-            sliderButton.Size = UDim2.new(0, 20, 1, 0)
-            sliderButton.Position = UDim2.new(0, -10, 0, 0)
-            sliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            sliderButton.BorderSizePixel = 0
-            sliderButton.AutoButtonColor = false
-            sliderButton.Text = ""
-
-            local function updateSlider(input)
-                local relativePos = (input.Position.X - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X
-                local sliderSize = math.clamp(relativePos, 0, 1)
-                sliderButton.Position = UDim2.new(sliderSize, -10, 0, 0)
-                sliderBar.Size = UDim2.new(sliderSize, 0, 1, 0)
-                local value = math.floor(min + (sliderSize * (max - min)))
-                callback(value)
-            end
-
-            sliderButton.MouseButton1Down:Connect(function()
-                local moveConnection, releaseConnection
-
-                moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseMovement then
-                        updateSlider(input)
-                    end
-                end)
-
-                releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        moveConnection:Disconnect()
-                        releaseConnection:Disconnect()
-                    end
-                end)
-            end)
-
-            table.insert(self.elements, sliderLabel)
-            table.insert(self.elements, sliderFrame)
-
-            -- Update the canvas size to fit all elements
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, (#self.elements + 1) * 60)
         end
 
         table.insert(self.tabs, tab)
-
-        -- Auto-select the first tab
-        if tabIndex == 1 then
-            tabScrollFrame.Visible = true
-        end
-
         return tab
     end
 

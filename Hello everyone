@@ -236,6 +236,40 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
         end
 
+        function tab:AddInput(inputText, defaultText, callback)
+            local inputFrame = Instance.new("Frame", self.scrollFrame)
+            inputFrame.Size = UDim2.new(1, -10, 0, 40)
+            inputFrame.Position = UDim2.new(0, 5, 0, #self.elements * 45)
+            inputFrame.BackgroundColor3 = theme.Element
+            inputFrame.BorderSizePixel = 0
+
+            local inputLabel = Instance.new("TextLabel", inputFrame)
+            inputLabel.Size = UDim2.new(0.3, 0, 1, 0)
+            inputLabel.Position = UDim2.new(0, 0, 0, 0)
+            inputLabel.Text = inputText
+            inputLabel.TextColor3 = theme.ElementText
+            inputLabel.BackgroundTransparency = 1
+            inputLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+            local inputBox = Instance.new("TextBox", inputFrame)
+            inputBox.Size = UDim2.new(0.7, 0, 1, 0)
+            inputBox.Position = UDim2.new(0.3, 0, 0, 0)
+            inputBox.Text = defaultText or ""
+            inputBox.TextColor3 = theme.ElementText
+            inputBox.BackgroundColor3 = theme.Element
+            inputBox.BorderSizePixel = 0
+
+            inputBox.FocusLost:Connect(function(enterPressed)
+                if enterPressed then
+                    callback(inputBox.Text)
+                end
+            end)
+
+            table.insert(self.elements, inputFrame)
+
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
+        end
+
         self.tabs[tabIndex] = tab
 
         return tab

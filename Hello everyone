@@ -191,7 +191,7 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
                 local itemLabel = Instance.new("TextLabel", self.scrollFrame)
                 itemLabel.Text = "  - " .. item
                 itemLabel.Size = UDim2.new(1, -10, 0, 30)
-                itemLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
+                itemLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45 + (i - 1) * 30)
                 itemLabel.BackgroundColor3 = theme.Element
                 itemLabel.TextColor3 = theme.ElementText
                 itemLabel.BorderSizePixel = 0
@@ -209,12 +209,13 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
                     itemLabel.Visible = isExpanded
                 end
 
-                local newCanvasHeight = (#self.elements + (isExpanded and #itemLabels or 0)) * 45
+                local numItemsVisible = isExpanded and #itemLabels or 0
+                local newCanvasHeight = (#self.elements + numItemsVisible) * 45
                 self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, newCanvasHeight)
             end)
 
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, (#self.elements + (isExpanded and #itemLabels or 0)) * 45 + 40)
             table.insert(self.elements, listLabel)
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, (#self.elements + (#itemLabels or 0)) * 45)
         end
 
         table.insert(self.tabs, tab)

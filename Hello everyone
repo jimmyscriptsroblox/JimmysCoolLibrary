@@ -173,6 +173,7 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
         end
 
         function tab:AddList(listText, items)
+            local isExpanded = false
             local listLabel = Instance.new("TextButton", self.scrollFrame)
             listLabel.Text = "▶ " .. listText
             listLabel.Size = UDim2.new(1, -10, 0, 40)
@@ -183,36 +184,33 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
             listLabel.TextWrapped = true
             listLabel.TextXAlignment = Enum.TextXAlignment.Left
             listLabel.AutoButtonColor = false
-            listLabel.MouseButton1Click:Connect(function()
-                local isExpanded = false
-                for _, child in ipairs(self.scrollFrame:GetChildren()) do
-                    if child:IsA("TextLabel") and child.Text ~= listLabel.Text then
-                        if child.Position.Y.Offset >= listLabel.Position.Y.Offset + 40 then
-                            if isExpanded then
-                                child.Visible = false
-                            end
-                        end
-                    end
-                end
 
+            local itemLabels = {}
+
+            for i, item in ipairs(items) do
+                local itemLabel = Instance.new("TextLabel", self.scrollFrame)
+                itemLabel.Text = "  - " .. item
+                itemLabel.Size = UDim2.new(1, -10, 0, 30)
+                itemLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
+                itemLabel.BackgroundColor3 = theme.Element
+                itemLabel.TextColor3 = theme.ElementText
+                itemLabel.BorderSizePixel = 0
+                itemLabel.TextWrapped = true
+                itemLabel.TextXAlignment = Enum.TextXAlignment.Left
+                itemLabel.Visible = false  -- Initially hidden
+                table.insert(self.elements, itemLabel)
+                table.insert(itemLabels, itemLabel)
+            end
+
+            listLabel.MouseButton1Click:Connect(function()
                 isExpanded = not isExpanded
                 listLabel.Text = (isExpanded and "▼ " or "▶ ") .. listText
 
-                for _, item in ipairs(items) do
-                    local itemLabel = Instance.new("TextLabel", self.scrollFrame)
-                    itemLabel.Text = "  - " .. item
-                    itemLabel.Size = UDim2.new(1, -10, 0, 30)
-                    itemLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-                    itemLabel.BackgroundColor3 = theme.Element
-                    itemLabel.TextColor3 = theme.ElementText
-                    itemLabel.BorderSizePixel = 0
-                    itemLabel.TextWrapped = true
-                    itemLabel.TextXAlignment = Enum.TextXAlignment.Left
+                for _, itemLabel in ipairs(itemLabels) do
                     itemLabel.Visible = isExpanded
-                    table.insert(self.elements, itemLabel)
                 end
 
-                self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
+                self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * (isExpanded and 30 or 0) + 40)
             end)
 
             table.insert(self.elements, listLabel)

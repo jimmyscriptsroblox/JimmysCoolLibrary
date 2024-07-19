@@ -173,105 +173,51 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
         end
 
         function tab:AddList(listText, items)
-            local listLabel = Instance.new("TextLabel", self.scrollFrame)
+            local listLabel = Instance.new("TextButton", self.scrollFrame)
             listLabel.Text = listText
             listLabel.Size = UDim2.new(1, -10, 0, 40)
             listLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
             listLabel.BackgroundColor3 = theme.Element
             listLabel.TextColor3 = theme.ElementText
             listLabel.BorderSizePixel = 0
+            listLabel.TextWrapped = true
+            listLabel.AutoButtonColor = false
             listLabel.TextXAlignment = Enum.TextXAlignment.Left
-            table.insert(self.elements, listLabel)
 
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
+            local expanded = false
+            local listItems = {}
 
-            for _, item in ipairs(items) do
-                local itemLabel = Instance.new("TextLabel", self.scrollFrame)
-                itemLabel.Text = item
-                itemLabel.Size = UDim2.new(1, -10, 0, 40)
-                itemLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-                itemLabel.BackgroundColor3 = theme.Element
-                itemLabel.TextColor3 = theme.ElementText
-                itemLabel.BorderSizePixel = 0
-                itemLabel.TextXAlignment = Enum.TextXAlignment.Left
-                table.insert(self.elements, itemLabel)
+            listLabel.MouseButton1Click:Connect(function()
+                expanded = not expanded
+
+                if expanded then
+                    for _, item in pairs(items) do
+                        item.func(self)
+                    end
+
+                    for _, element in pairs(listItems) do
+                        table.insert(self.elements, element)
+                    end
+                else
+                    for _, element in pairs(listItems) do
+                        element:Destroy()
+                        for i, elem in ipairs(self.elements) do
+                            if elem == element then
+                                table.remove(self.elements, i)
+                                break
+                            end
+                        end
+                    end
+                end
 
                 self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
-            end
-        end
-
-        function tab:AddToggle(toggleText, defaultState, callback)
-            local toggleFrame = Instance.new("Frame", self.scrollFrame)
-            toggleFrame.Size = UDim2.new(1, -10, 0, 40)
-            toggleFrame.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-            toggleFrame.BackgroundColor3 = theme.Element
-            toggleFrame.BorderSizePixel = 0
-
-            local toggleLabel = Instance.new("TextLabel", toggleFrame)
-            toggleLabel.Size = UDim2.new(0.8, 0, 1, 0)
-            toggleLabel.Position = UDim2.new(0, 0, 0, 0)
-            toggleLabel.Text = toggleText
-            toggleLabel.TextColor3 = theme.ElementText
-            toggleLabel.BackgroundTransparency = 1
-            toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-            local toggleButton = Instance.new("TextButton", toggleFrame)
-            toggleButton.Size = UDim2.new(0.2, 0, 1, 0)
-            toggleButton.Position = UDim2.new(0.8, 0, 0, 0)
-            toggleButton.BackgroundColor3 = defaultState and theme.ToggleOn or theme.ToggleOff
-            toggleButton.Text = ""
-            toggleButton.BorderSizePixel = 0
-            toggleButton.AutoButtonColor = false
-
-            local state = defaultState
-
-            toggleButton.MouseButton1Click:Connect(function()
-                state = not state
-                toggleButton.BackgroundColor3 = state and theme.ToggleOn or theme.ToggleOff
-                callback(state)
             end)
 
-            table.insert(self.elements, toggleFrame)
-
+            table.insert(self.elements, listLabel)
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
         end
 
-        function tab:AddInput(inputText, defaultText, callback)
-            local inputFrame = Instance.new("Frame", self.scrollFrame)
-            inputFrame.Size = UDim2.new(1, -10, 0, 40)
-            inputFrame.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-            inputFrame.BackgroundColor3 = theme.Element
-            inputFrame.BorderSizePixel = 0
-
-            local inputLabel = Instance.new("TextLabel", inputFrame)
-            inputLabel.Size = UDim2.new(0.3, 0, 1, 0)
-            inputLabel.Position = UDim2.new(0, 0, 0, 0)
-            inputLabel.Text = inputText
-            inputLabel.TextColor3 = theme.ElementText
-            inputLabel.BackgroundTransparency = 1
-            inputLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-            local inputBox = Instance.new("TextBox", inputFrame)
-            inputBox.Size = UDim2.new(0.7, 0, 1, 0)
-            inputBox.Position = UDim2.new(0.3, 0, 0, 0)
-            inputBox.Text = defaultText or ""
-            inputBox.TextColor3 = theme.ElementText
-            inputBox.BackgroundColor3 = theme.Element
-            inputBox.BorderSizePixel = 0
-
-            inputBox.FocusLost:Connect(function(enterPressed)
-                if enterPressed then
-                    callback(inputBox.Text)
-                end
-            end)
-
-            table.insert(self.elements, inputFrame)
-
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
-        end
-
-        self.tabs[tabIndex] = tab
-
+        table.insert(self.tabs, tab)
         return tab
     end
 

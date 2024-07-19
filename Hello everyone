@@ -197,8 +197,7 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
                 itemLabel.BorderSizePixel = 0
                 itemLabel.TextWrapped = true
                 itemLabel.TextXAlignment = Enum.TextXAlignment.Left
-                itemLabel.Visible = false  -- Initially hidden
-                table.insert(self.elements, itemLabel)
+                itemLabel.Visible = false
                 table.insert(itemLabels, itemLabel)
             end
 
@@ -210,9 +209,11 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
                     itemLabel.Visible = isExpanded
                 end
 
-                self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * (isExpanded and 30 or 0) + 40)
+                local newCanvasHeight = (#self.elements + (isExpanded and #itemLabels or 0)) * 45
+                self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, newCanvasHeight)
             end)
 
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, (#self.elements + (isExpanded and #itemLabels or 0)) * 45 + 40)
             table.insert(self.elements, listLabel)
         end
 

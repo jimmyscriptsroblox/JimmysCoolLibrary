@@ -174,7 +174,7 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
 
         function tab:AddList(listText, items)
             local listLabel = Instance.new("TextButton", self.scrollFrame)
-            listLabel.Text = listText
+            listLabel.Text = listText .. " ›"
             listLabel.Size = UDim2.new(1, -10, 0, 40)
             listLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
             listLabel.BackgroundColor3 = theme.Element
@@ -183,37 +183,29 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
             listLabel.TextWrapped = true
             listLabel.AutoButtonColor = false
             listLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-            local expanded = false
-            local listItems = {}
-
             listLabel.MouseButton1Click:Connect(function()
-                expanded = not expanded
-
-                if expanded then
-                    for _, item in pairs(items) do
-                        item.func(self)
-                    end
-
-                    for _, element in pairs(listItems) do
-                        table.insert(self.elements, element)
-                    end
-                else
-                    for _, element in pairs(listItems) do
-                        element:Destroy()
-                        for i, elem in ipairs(self.elements) do
-                            if elem == element then
-                                table.remove(self.elements, i)
-                                break
-                            end
-                        end
+                for _, item in pairs(self.scrollFrame:GetChildren()) do
+                    if item:IsA("TextButton") and item ~= listLabel then
+                        item.Visible = not item.Visible
                     end
                 end
-
-                self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
             end)
 
-            table.insert(self.elements, listLabel)
+            for _, itemText in ipairs(items) do
+                local itemButton = Instance.new("TextButton", self.scrollFrame)
+                itemButton.Text = "  " .. itemText
+                itemButton.Size = UDim2.new(1, -10, 0, 40)
+                itemButton.Position = UDim2.new(0, 15, 0, (#self.elements + 1) * 45)
+                itemButton.BackgroundColor3 = theme.Element
+                itemButton.TextColor3 = theme.ElementText
+                itemButton.BorderSizePixel = 0
+                itemButton.TextWrapped = true
+                itemButton.AutoButtonColor = false
+                itemButton.TextXAlignment = Enum.TextXAlignment.Left
+                itemButton.Visible = false
+                table.insert(self.elements, itemButton)
+            end
+
             self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
         end
 

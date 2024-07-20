@@ -163,8 +163,8 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
 
         local tabButton = Instance.new("TextButton", self.tabButtonHolder)
         tabButton.Text = name
-        tabButton.Size = UDim2.new(1, 0, 0, 40)
-        tabButton.Position = UDim2.new(0, 0, 0, (tabIndex - 1) * 45)
+        tabButton.Size = UDim2.new(1, 0, 0, 30)
+        tabButton.Position = UDim2.new(0, 0, (tabIndex - 1) * 30, 0)
         tabButton.BackgroundColor3 = theme.Button
         tabButton.TextColor3 = theme.ButtonText
         tabButton.BorderSizePixel = 0
@@ -205,8 +205,12 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
             for _, color in ipairs(colors) do
                 mainFrame.BackgroundColor3 = color
                 titleBar.BackgroundColor3 = color
-                button.BackgroundColor3 = color
-                scrollFrame.BackgroundColor3 = color
+                tabButtonHolder.BackgroundColor3 = color
+                for _, button in pairs(tabButtonHolder:GetChildren()) do
+                    if button:IsA("TextButton") then
+                        button.BackgroundColor3 = color
+                    end
+                end
                 wait(1)
             end
         end

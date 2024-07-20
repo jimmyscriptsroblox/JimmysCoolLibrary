@@ -187,6 +187,52 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
         end)
 
         table.insert(self.tabs, tabScrollFrame)
+        return {
+            AddText = function(text)
+                local textLabel = Instance.new("TextLabel", tabScrollFrame)
+                textLabel.Text = text
+                textLabel.Size = UDim2.new(1, 0, 0, 30)
+                textLabel.BackgroundColor3 = theme.Element
+                textLabel.TextColor3 = theme.ElementText
+                textLabel.BorderSizePixel = 0
+                textLabel.TextXAlignment = Enum.TextXAlignment.Left
+                textLabel.TextSize = 14
+            end,
+            AddInput = function(labelText, callback)
+                local inputLabel = Instance.new("TextLabel", tabScrollFrame)
+                inputLabel.Text = labelText
+                inputLabel.Size = UDim2.new(1, 0, 0, 30)
+                inputLabel.BackgroundColor3 = theme.Element
+                inputLabel.TextColor3 = theme.ElementText
+                inputLabel.BorderSizePixel = 0
+                inputLabel.TextXAlignment = Enum.TextXAlignment.Left
+                inputLabel.TextSize = 14
+
+                local textBox = Instance.new("TextBox", tabScrollFrame)
+                textBox.Size = UDim2.new(1, 0, 0, 30)
+                textBox.Position = UDim2.new(0, 0, 0, 30)
+                textBox.BackgroundColor3 = theme.Button
+                textBox.TextColor3 = theme.ButtonText
+                textBox.BorderSizePixel = 0
+                textBox.TextSize = 14
+                textBox.ClearTextOnFocus = false
+                textBox.FocusLost:Connect(function(enterPressed)
+                    if enterPressed then
+                        callback(textBox.Text)
+                    end
+                end)
+            end,
+            AddButton = function(buttonText, callback)
+                local button = Instance.new("TextButton", tabScrollFrame)
+                button.Text = buttonText
+                button.Size = UDim2.new(1, 0, 0, 30)
+                button.BackgroundColor3 = theme.Button
+                button.TextColor3 = theme.ButtonText
+                button.BorderSizePixel = 0
+                button.TextSize = 14
+                button.MouseButton1Click:Connect(callback)
+            end
+        }
     end
 
     function window:StartRainbowAnimation()

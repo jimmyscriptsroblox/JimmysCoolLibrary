@@ -28,43 +28,43 @@ JimmysCoolLibrary.Themes = {
         ToggleButton = Color3.fromRGB(225, 225, 225)
     },
     Manga = {
-        MainFrame = Color3.fromRGB(0, 0, 0), -- Black
-        TitleBar = Color3.fromRGB(50, 50, 50), -- Dark Grey
+        MainFrame = Color3.fromRGB(0, 0, 0),
+        TitleBar = Color3.fromRGB(50, 50, 50),
         TitleText = Color3.fromRGB(255, 255, 255),
-        Button = Color3.fromRGB(30, 30, 30), -- Dark Grey
+        Button = Color3.fromRGB(30, 30, 30),
         ButtonText = Color3.fromRGB(255, 255, 255),
-        ScrollFrame = Color3.fromRGB(0, 0, 0), -- Black
-        Element = Color3.fromRGB(50, 50, 50), -- Dark Grey
+        ScrollFrame = Color3.fromRGB(0, 0, 0),
+        Element = Color3.fromRGB(50, 50, 50),
         ElementText = Color3.fromRGB(255, 255, 255),
         ToggleOn = Color3.fromRGB(0, 255, 0),
         ToggleOff = Color3.fromRGB(255, 0, 0),
-        ToggleButton = Color3.fromRGB(50, 50, 50) -- Dark Grey
+        ToggleButton = Color3.fromRGB(50, 50, 50)
     },
     Ocean = {
-        MainFrame = Color3.fromRGB(0, 0, 128), -- Ocean Blue
-        TitleBar = Color3.fromRGB(0, 0, 100), -- Darker Blue
+        MainFrame = Color3.fromRGB(0, 0, 128),
+        TitleBar = Color3.fromRGB(0, 0, 100),
         TitleText = Color3.fromRGB(255, 255, 255),
-        Button = Color3.fromRGB(0, 0, 100), -- Darker Blue
+        Button = Color3.fromRGB(0, 0, 100),
         ButtonText = Color3.fromRGB(255, 255, 255),
-        ScrollFrame = Color3.fromRGB(0, 0, 128), -- Ocean Blue
-        Element = Color3.fromRGB(0, 0, 100), -- Darker Blue
+        ScrollFrame = Color3.fromRGB(0, 0, 128),
+        Element = Color3.fromRGB(0, 0, 100),
         ElementText = Color3.fromRGB(255, 255, 255),
         ToggleOn = Color3.fromRGB(0, 255, 255),
         ToggleOff = Color3.fromRGB(255, 0, 255),
-        ToggleButton = Color3.fromRGB(0, 0, 100), -- Darker Blue
-        BackgroundTexture = "rbxassetid://14159786307" -- 0.5 Transparent Water Texture
+        ToggleButton = Color3.fromRGB(0, 0, 100),
+        BackgroundTexture = "rbxassetid://14159786307"
     },
     Rainbow = {
-        MainFrame = Color3.fromRGB(255, 0, 0), -- Red
-        TitleBar = Color3.fromRGB(255, 165, 0), -- Orange
-        TitleText = Color3.fromRGB(255, 255, 0), -- Yellow
-        Button = Color3.fromRGB(0, 255, 0), -- Green
-        ButtonText = Color3.fromRGB(0, 255, 255), -- Cyan
-        ScrollFrame = Color3.fromRGB(0, 0, 255), -- Blue
-        Element = Color3.fromRGB(75, 0, 130), -- Indigo
-        ElementText = Color3.fromRGB(238, 130, 238), -- Violet
-        ToggleOn = Color3.fromRGB(255, 0, 0), -- Red
-        ToggleOff = Color3.fromRGB(0, 0, 0) -- Black
+        MainFrame = Color3.fromRGB(255, 0, 0),
+        TitleBar = Color3.fromRGB(255, 165, 0),
+        TitleText = Color3.fromRGB(255, 255, 0),
+        Button = Color3.fromRGB(0, 255, 0),
+        ButtonText = Color3.fromRGB(0, 255, 255),
+        ScrollFrame = Color3.fromRGB(0, 0, 255),
+        Element = Color3.fromRGB(75, 0, 130),
+        ElementText = Color3.fromRGB(238, 130, 238),
+        ToggleOn = Color3.fromRGB(255, 0, 0),
+        ToggleOff = Color3.fromRGB(0, 0, 0)
     }
 }
 
@@ -146,12 +146,17 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
     tabHolder.Position = UDim2.new(0, 100, 0, 20)
     tabHolder.BackgroundColor3 = theme.ScrollFrame
     tabHolder.BorderSizePixel = 0
+
+    -- Add background texture if available
     if theme.BackgroundTexture then
         local background = Instance.new("ImageLabel", tabHolder)
         background.Size = UDim2.new(1, 0, 1, 0)
         background.Position = UDim2.new(0, 0, 0, 0)
         background.Image = theme.BackgroundTexture
         background.BackgroundTransparency = 1
+        background.ZIndex = 0 -- Ensure it's behind other elements
+        background.ImageTransparency = 1 -- Ensure it's non-interactive
+        background.Active = false
     end
 
     local window = {frame = mainFrame, tabs = {}, tabButtonHolder = tabButtonHolder}

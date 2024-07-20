@@ -175,47 +175,88 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
         function tab:AddList(listText, items)
             local isExpanded = false
             local listLabel = Instance.new("TextButton", self.scrollFrame)
-            listLabel.Text = "▶ " .. listText
+            listLabel.Text = listText
             listLabel.Size = UDim2.new(1, -10, 0, 40)
             listLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
             listLabel.BackgroundColor3 = theme.Element
             listLabel.TextColor3 = theme.ElementText
             listLabel.BorderSizePixel = 0
             listLabel.TextWrapped = true
-            listLabel.TextXAlignment = Enum.TextXAlignment.Left
             listLabel.AutoButtonColor = false
+            listLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-            local itemLabels = {}
+            local listFrame = Instance.new("Frame", self.scrollFrame)
+            listFrame.Size = UDim2.new(1, -10, 0, 0)
+            listFrame.Position = UDim2.new(0, 5, 0, 40)
+            listFrame.BackgroundColor3 = theme.ScrollFrame
+            listFrame.BorderSizePixel = 0
+            listFrame.Visible = false
 
-            for i, item in ipairs(items) do
-                local itemLabel = Instance.new("TextLabel", self.scrollFrame)
-                itemLabel.Text = "  - " .. item
-                itemLabel.Size = UDim2.new(1, -10, 0, 30)
-                itemLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45 + (i - 1) * 30)
-                itemLabel.BackgroundColor3 = theme.Element
-                itemLabel.TextColor3 = theme.ElementText
-                itemLabel.BorderSizePixel = 0
-                itemLabel.TextWrapped = true
-                itemLabel.TextXAlignment = Enum.TextXAlignment.Left
-                itemLabel.Visible = false
-                table.insert(itemLabels, itemLabel)
+            for _, item in ipairs(items) do
+                local itemButton = Instance.new("TextButton", listFrame)
+                itemButton.Text = item
+                itemButton.Size = UDim2.new(1, 0, 0, 30)
+                itemButton.Position = UDim2.new(0, 0, 0, #listFrame:GetChildren() * 30)
+                itemButton.BackgroundColor3 = theme.Element
+                itemButton.TextColor3 = theme.ElementText
+                itemButton.BorderSizePixel = 0
+                itemButton.TextWrapped = true
+                itemButton.AutoButtonColor = false
+                itemButton.TextXAlignment = Enum.TextXAlignment.Left
             end
 
             listLabel.MouseButton1Click:Connect(function()
                 isExpanded = not isExpanded
-                listLabel.Text = (isExpanded and "▼ " or "▶ ") .. listText
-
-                for _, itemLabel in ipairs(itemLabels) do
-                    itemLabel.Visible = isExpanded
-                end
-
-                local numItemsVisible = isExpanded and #itemLabels or 0
-                local newCanvasHeight = (#self.elements + numItemsVisible) * 45
-                self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, newCanvasHeight)
+                listFrame.Visible = isExpanded
             end)
 
             table.insert(self.elements, listLabel)
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, (#self.elements + (#itemLabels or 0)) * 45)
+            table.insert(self.elements, listFrame)
+
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
+        end
+
+        function tab:AddInput(inputLabel, callback)
+            local inputFrame = Instance.new("Frame", self.scrollFrame)
+            inputFrame.Size = UDim2.new(1, -10, 0, 40)
+            inputFrame.Position = UDim2.new(0, 5, 0, #self.elements * 45)
+            inputFrame.BackgroundColor3 = theme.Element
+            inputFrame.BorderSizePixel = 0
+
+            local label = Instance.new("TextLabel", inputFrame)
+            label.Size = UDim2.new(1, -100, 1, 0)
+            label.Position = UDim2.new(0, 0, 0, 0)
+            label.Text = inputLabel
+            label.TextColor3 = theme.ElementText
+            label.BackgroundTransparency = 1
+            label.TextSize = 14
+            label.TextXAlignment = Enum.TextXAlignment.Left
+
+            local inputBox = Instance.new("TextBox", inputFrame)
+            inputBox.Size = UDim2.new(1, -10, 1, 0)
+            inputBox.Position = UDim2.new(0, 0, 0, 20)
+            inputBox.Text = ""
+            inputBox.BackgroundColor3 = theme.Button
+            inputBox.TextColor3 = theme.ButtonText
+            inputBox.BorderSizePixel = 0
+            inputBox.TextXAlignment = Enum.TextXAlignment.Left
+            inputBox.PlaceholderText = "Enter text here..."
+
+            local submitButton = Instance.new("TextButton", inputFrame)
+            submitButton.Size = UDim2.new(0, 80, 1, 0)
+            submitButton.Position = UDim2.new(1, -90, 0, 0)
+            submitButton.Text = "Submit"
+            submitButton.BackgroundColor3 = theme.Button
+            submitButton.TextColor3 = theme.ButtonText
+            submitButton.BorderSizePixel = 0
+            submitButton.AutoButtonColor = false
+            submitButton.MouseButton1Click:Connect(function()
+                callback(inputBox.Text)
+            end)
+
+            table.insert(self.elements, inputFrame)
+
+            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
         end
 
         table.insert(self.tabs, tab)

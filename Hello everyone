@@ -46,13 +46,12 @@ JimmysCoolLibrary.Themes = {
         TitleText = Color3.fromRGB(255, 255, 255),
         Button = Color3.fromRGB(0, 0, 100),
         ButtonText = Color3.fromRGB(255, 255, 255),
-        ScrollFrame = Color3.fromRGB(0, 0, 128),
+        ScrollFrame = Color3.fromRGB(200, 200, 200),
         Element = Color3.fromRGB(0, 0, 100),
         ElementText = Color3.fromRGB(255, 255, 255),
         ToggleOn = Color3.fromRGB(0, 255, 255),
         ToggleOff = Color3.fromRGB(255, 0, 255),
         ToggleButton = Color3.fromRGB(0, 0, 100),
-        BackgroundTexture = "rbxassetid://14159786307"
     },
     Rainbow = {
         MainFrame = Color3.fromRGB(255, 0, 0),
@@ -146,17 +145,6 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
     tabHolder.Position = UDim2.new(0, 100, 0, 20)
     tabHolder.BackgroundColor3 = theme.ScrollFrame
     tabHolder.BorderSizePixel = 0
-
-    if theme.BackgroundTexture then
-        local background = Instance.new("ImageLabel", tabHolder)
-        background.Size = UDim2.new(1, 0, 1, 0)
-        background.Position = UDim2.new(0, 0, 0, 0)
-        background.Image = theme.BackgroundTexture
-        background.BackgroundTransparency = 0.5
-        background.ZIndex = 10
-        background.ImageTransparency = 0.5
-        background.Active = true
-    end
 
     local window = {frame = mainFrame, tabs = {}, tabButtonHolder = tabButtonHolder}
 

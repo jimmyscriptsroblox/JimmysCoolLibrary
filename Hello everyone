@@ -12,7 +12,6 @@ JimmysCoolLibrary.Themes = {
         ElementText = Color3.fromRGB(255, 255, 255),
         ToggleOff = Color3.fromRGB(100, 100, 100),
         ToggleOn = Color3.fromRGB(0, 255, 0),
-        BackgroundTexture = "rbxassetid://1234567890"
     },
     Manga = {
         MainFrame = Color3.fromRGB(0, 0, 0),
@@ -25,7 +24,6 @@ JimmysCoolLibrary.Themes = {
         ElementText = Color3.fromRGB(255, 255, 255),
         ToggleOff = Color3.fromRGB(120, 120, 120),
         ToggleOn = Color3.fromRGB(255, 0, 0),
-        BackgroundTexture = "rbxassetid://9876543210"
     },
     Ocean = {
         MainFrame = Color3.fromRGB(0, 119, 190),
@@ -126,9 +124,9 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
         background.Size = UDim2.new(1, 0, 1, 0)
         background.Position = UDim2.new(0, 0, 0, 0)
         background.Image = theme.BackgroundTexture
-        background.BackgroundTransparency = 1
-        background.ZIndex = 0
-        background.ImageTransparency = 1
+        background.BackgroundTransparency = 0.5
+        background.ZIndex = 10
+        background.ImageTransparency = 0.5
         background.Active = false
     end
 
@@ -148,9 +146,9 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
 
         tabButton.MouseButton1Click:Connect(function()
             for _, tab in pairs(self.tabs) do
-                tab.Visible = false
+                tab.frame.Visible = false
             end
-            self.tabs[tabIndex].Visible = true
+            self.tabs[tabIndex].frame.Visible = true
         end)
 
         local tabFrame = Instance.new("Frame", tabHolder)
@@ -159,104 +157,88 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
         tabFrame.BackgroundColor3 = theme.Element
         tabFrame.Visible = false
 
-        self.tabs[tabIndex] = tabFrame
+        self.tabs[tabIndex] = {frame = tabFrame}
 
-        return tabFrame
-    end
+        local tab = self.tabs[tabIndex]
 
-    function window:AddText(tabIndex, text)
-        local tabFrame = self.tabs[tabIndex]
-        if not tabFrame then return end
+        function tab:AddText(text)
+            local textLabel = Instance.new("TextLabel", tabFrame)
+            textLabel.Size = UDim2.new(1, 0, 0, 30)
+            textLabel.BackgroundColor3 = theme.Element
+            textLabel.TextColor3 = theme.ElementText
+            textLabel.Text = text
+            textLabel.TextSize = 14
+            textLabel.TextXAlignment = Enum.TextXAlignment.Left
+            textLabel.TextWrapped = true
+        end
 
-        local textLabel = Instance.new("TextLabel", tabFrame)
-        textLabel.Size = UDim2.new(1, 0, 0, 30)
-        textLabel.BackgroundColor3 = theme.Element
-        textLabel.TextColor3 = theme.ElementText
-        textLabel.Text = text
-        textLabel.TextSize = 14
-        textLabel.TextXAlignment = Enum.TextXAlignment.Left
-        textLabel.TextWrapped = true
-    end
+        function tab:AddButton(text, callback)
+            local button = Instance.new("TextButton", tabFrame)
+            button.Size = UDim2.new(1, 0, 0, 30)
+            button.BackgroundColor3 = theme.Button
+            button.TextColor3 = theme.ButtonText
+            button.Text = text
+            button.TextSize = 14
+            button.BorderSizePixel = 0
+            button.MouseButton1Click:Connect(callback)
+        end
 
-    function window:AddButton(tabIndex, text, callback)
-        local tabFrame = self.tabs[tabIndex]
-        if not tabFrame then return end
+        function tab:AddInput(text, callback)
+            local inputLabel = Instance.new("TextLabel", tabFrame)
+            inputLabel.Size = UDim2.new(1, 0, 0, 30)
+            inputLabel.BackgroundColor3 = theme.Element
+            inputLabel.TextColor3 = theme.ElementText
+            inputLabel.Text = text
+            inputLabel.TextSize = 14
+            inputLabel.TextXAlignment = Enum.TextXAlignment.Left
+            inputLabel.TextWrapped = true
 
-        local button = Instance.new("TextButton", tabFrame)
-        button.Size = UDim2.new(1, 0, 0, 30)
-        button.BackgroundColor3 = theme.Button
-        button.TextColor3 = theme.ButtonText
-        button.Text = text
-        button.BorderSizePixel = 0
+            local inputBox = Instance.new("TextBox", tabFrame)
+            inputBox.Size = UDim2.new(1, 0, 0, 30)
+            inputBox.Position = UDim2.new(0, 0, 0, 30)
+            inputBox.BackgroundColor3 = theme.Element
+            inputBox.TextColor3 = theme.ElementText
+            inputBox.BorderSizePixel = 0
+            inputBox.PlaceholderText = "Enter text"
+            inputBox.ClearTextOnFocus = false
 
-        button.MouseButton1Click:Connect(function()
-            if callback then callback() end
-        end)
-    end
+            inputBox.FocusLost:Connect(function(enterPressed)
+                if enterPressed and callback then callback(inputBox.Text) end
+            end)
+        end
 
-    function window:AddInput(tabIndex, text, callback)
-        local tabFrame = self.tabs[tabIndex]
-        if not tabFrame then return end
+        function tab:AddToggle(text, default, callback)
+            local toggleFrame = Instance.new("Frame", tabFrame)
+            toggleFrame.Size = UDim2.new(1, 0, 0, 30)
+            toggleFrame.BackgroundColor3 = theme.Element
+            toggleFrame.BorderSizePixel = 0
 
-        local inputLabel = Instance.new("TextLabel", tabFrame)
-        inputLabel.Size = UDim2.new(1, 0, 0, 30)
-        inputLabel.BackgroundColor3 = theme.Element
-        inputLabel.TextColor3 = theme.ElementText
-        inputLabel.Text = text
-        inputLabel.TextSize = 14
-        inputLabel.TextXAlignment = Enum.TextXAlignment.Left
-        inputLabel.TextWrapped = true
+            local toggleButton = Instance.new("TextButton", toggleFrame)
+            toggleButton.Size = UDim2.new(0, 30, 0, 30)
+            toggleButton.BackgroundColor3 = default and theme.ToggleOn or theme.ToggleOff
+            toggleButton.Text = ""
+            toggleButton.BorderSizePixel = 0
 
-        local inputBox = Instance.new("TextBox", tabFrame)
-        inputBox.Size = UDim2.new(1, 0, 0, 30)
-        inputBox.Position = UDim2.new(0, 0, 0, 30)
-        inputBox.BackgroundColor3 = theme.Element
-        inputBox.TextColor3 = theme.ElementText
-        inputBox.BorderSizePixel = 0
-        inputBox.PlaceholderText = "Enter text"
-        inputBox.ClearTextOnFocus = false
+            local toggleLabel = Instance.new("TextLabel", toggleFrame)
+            toggleLabel.Size = UDim2.new(1, -30, 1, 0)
+            toggleLabel.Position = UDim2.new(0, 30, 0, 0)
+            toggleLabel.BackgroundTransparency = 1
+            toggleLabel.TextColor3 = theme.ElementText
+            toggleLabel.Text = text
+            toggleLabel.TextSize = 14
+            toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-        inputBox.FocusLost:Connect(function(enterPressed)
-            if enterPressed and callback then callback(inputBox.Text) end
-        end)
-    end
+            local toggled = default
+            toggleButton.MouseButton1Click:Connect(function()
+                toggled = not toggled
+                toggleButton.BackgroundColor3 = toggled and theme.ToggleOn or theme.ToggleOff
+                if callback then
+                    callback(toggled)
+                end
+            end)
+        end
 
-    function window:AddToggle(tabIndex, text, callback)
-        local tabFrame = self.tabs[tabIndex]
-        if not tabFrame then return end
-
-        local toggleFrame = Instance.new("Frame", tabFrame)
-        toggleFrame.Size = UDim2.new(1, 0, 0, 40)
-        toggleFrame.BackgroundColor3 = theme.Element
-
-        local toggleLabel = Instance.new("TextLabel", toggleFrame)
-        toggleLabel.Size = UDim2.new(0, 200, 1, 0)
-        toggleLabel.Position = UDim2.new(0, 0, 0, 0)
-        toggleLabel.Text = text
-        toggleLabel.BackgroundColor3 = theme.Element
-        toggleLabel.TextColor3 = theme.ElementText
-        toggleLabel.BorderSizePixel = 0
-
-        local toggleSwitch = Instance.new("TextButton", toggleFrame)
-        toggleSwitch.Size = UDim2.new(0, 50, 1, 0)
-        toggleSwitch.Position = UDim2.new(1, -60, 0, 0)
-        toggleSwitch.BackgroundColor3 = theme.ToggleOff
-        toggleSwitch.Text = "OFF"
-        toggleSwitch.TextColor3 = theme.ElementText
-        toggleSwitch.BorderSizePixel = 0
-
-        local toggled = false
-        toggleSwitch.MouseButton1Click:Connect(function()
-            toggled = not toggled
-            if toggled then
-                toggleSwitch.BackgroundColor3 = theme.ToggleOn
-                toggleSwitch.Text = "ON"
-            else
-                toggleSwitch.BackgroundColor3 = theme.ToggleOff
-                toggleSwitch.Text = "OFF"
-            end
-            if callback then callback(toggled) end
-        end)
+        return tab
     end
 
     return window

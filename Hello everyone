@@ -147,15 +147,14 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
     tabHolder.BackgroundColor3 = theme.ScrollFrame
     tabHolder.BorderSizePixel = 0
 
-    -- Add background texture if available
     if theme.BackgroundTexture then
         local background = Instance.new("ImageLabel", tabHolder)
         background.Size = UDim2.new(1, 0, 1, 0)
         background.Position = UDim2.new(0, 0, 0, 0)
         background.Image = theme.BackgroundTexture
-        background.BackgroundTransparency = 1
-        background.ZIndex = 0 -- Ensure it's behind other elements
-        background.ImageTransparency = 1 -- Ensure it's non-interactive
+        background.BackgroundTransparency = 0.5
+        background.ZIndex = 10
+        background.ImageTransparency = 0.5
         background.Active = false
     end
 

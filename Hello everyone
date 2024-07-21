@@ -155,7 +155,7 @@ function JimmysCoolLibrary:CreateHub(title, themeName)
         background.BackgroundTransparency = 0.5
         background.ZIndex = 10
         background.ImageTransparency = 0.5
-        background.Active = false
+        background.Active = true
     end
 
     local window = {frame = mainFrame, tabs = {}, tabButtonHolder = tabButtonHolder}

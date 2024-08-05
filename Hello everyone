@@ -1,307 +1,262 @@
+-- Define the library
 local JimmysCoolLibrary = {}
 
-JimmysCoolLibrary.Themes = {
-    Dark = {
-        MainFrame = Color3.fromRGB(35, 35, 35),
-        TitleBar = Color3.fromRGB(45, 45, 45),
-        TitleText = Color3.fromRGB(255, 255, 255),
-        Button = Color3.fromRGB(55, 55, 55),
-        ButtonText = Color3.fromRGB(255, 255, 255),
-        ScrollFrame = Color3.fromRGB(35, 35, 35),
-        Element = Color3.fromRGB(45, 45, 45),
-        ElementText = Color3.fromRGB(255, 255, 255),
-        ToggleOn = Color3.fromRGB(0, 255, 0),
-        ToggleOff = Color3.fromRGB(255, 0, 0),
-        ToggleButton = Color3.fromRGB(45, 45, 45)
-    },
-    Light = {
-        MainFrame = Color3.fromRGB(245, 245, 245),
-        TitleBar = Color3.fromRGB(225, 225, 225),
-        TitleText = Color3.fromRGB(0, 0, 0),
-        Button = Color3.fromRGB(215, 215, 215),
-        ButtonText = Color3.fromRGB(0, 0, 0),
-        ScrollFrame = Color3.fromRGB(245, 245, 245),
-        Element = Color3.fromRGB(225, 225, 225),
-        ElementText = Color3.fromRGB(0, 0, 0),
-        ToggleOn = Color3.fromRGB(0, 255, 0),
-        ToggleOff = Color3.fromRGB(255, 0, 0),
-        ToggleButton = Color3.fromRGB(225, 225, 225)
-    },
-    TrueDark = {
-        MainFrame = Color3.fromRGB(0, 0, 0),
-        TitleBar = Color3.fromRGB(50, 50, 50),
-        TitleText = Color3.fromRGB(255, 255, 255),
-        Button = Color3.fromRGB(30, 30, 30),
-        ButtonText = Color3.fromRGB(255, 255, 255),
-        ScrollFrame = Color3.fromRGB(0, 0, 0),
-        Element = Color3.fromRGB(50, 50, 50),
-        ElementText = Color3.fromRGB(255, 255, 255),
-        ToggleOn = Color3.fromRGB(0, 255, 0),
-        ToggleOff = Color3.fromRGB(255, 0, 0),
-        ToggleButton = Color3.fromRGB(50, 50, 50)
-    },
-    Ocean = {
-        MainFrame = Color3.fromRGB(0, 0, 128),
-        TitleBar = Color3.fromRGB(0, 0, 100),
-        TitleText = Color3.fromRGB(255, 255, 255),
-        Button = Color3.fromRGB(0, 0, 100),
-        ButtonText = Color3.fromRGB(255, 255, 255),
-        ScrollFrame = Color3.fromRGB(1, 1, 135),
-        Element = Color3.fromRGB(0, 0, 100),
-        ElementText = Color3.fromRGB(255, 255, 255),
-        ToggleOn = Color3.fromRGB(0, 255, 255),
-        ToggleOff = Color3.fromRGB(255, 0, 255),
-        ToggleButton = Color3.fromRGB(0, 0, 100),
-    },
-    Rainbow = {
-        MainFrame = Color3.fromRGB(255, 0, 0),
-        TitleBar = Color3.fromRGB(255, 165, 0),
-        TitleText = Color3.fromRGB(255, 255, 0),
-        Button = Color3.fromRGB(0, 255, 0),
-        ButtonText = Color3.fromRGB(0, 255, 255),
-        ScrollFrame = Color3.fromRGB(0, 0, 255),
-        Element = Color3.fromRGB(75, 0, 130),
-        ElementText = Color3.fromRGB(238, 130, 238),
-        ToggleOn = Color3.fromRGB(255, 0, 0),
-        ToggleOff = Color3.fromRGB(0, 0, 0)
-    }
-}
+-- Create the main window
+function JimmysCoolLibrary:MakeWindow(options)
+    local window = Instance.new("ScreenGui")
+    window.Name = options.Name or "Window"
+    window.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-function JimmysCoolLibrary:CreateHub(title, themeName)
-    local theme = self.Themes[themeName] or self.Themes.Dark
+    -- Creating the main frame
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0.5, 0, 0.5, 0)
+    mainFrame.Position = UDim2.new(0.25, 0, 0.25, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    mainFrame.Parent = window
 
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    -- Title bar
+    local titleBar = Instance.new("TextLabel")
+    titleBar.Size = UDim2.new(1, 0, 0.1, 0)
+    titleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleBar.Text = options.Name or "Window"
+    titleBar.Parent = mainFrame
 
-    local mainFrame = Instance.new("Frame", screenGui)
-    mainFrame.Size = UDim2.new(0, 400, 0, 300)
-    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-    mainFrame.BackgroundColor3 = theme.MainFrame
-    mainFrame.BorderSizePixel = 0
-    mainFrame.Active = true
-    mainFrame.Draggable = true
+    -- Tab container
+    local tabContainer = Instance.new("Frame")
+    tabContainer.Size = UDim2.new(1, 0, 0.9, 0)
+    tabContainer.Position = UDim2.new(0, 0, 0.1, 0)
+    tabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    tabContainer.Parent = mainFrame
 
-    local titleBar = Instance.new("Frame", mainFrame)
-    titleBar.Size = UDim2.new(1, 0, 0, 20)
-    titleBar.Position = UDim2.new(0, 0, 0, 0)
-    titleBar.BackgroundColor3 = theme.TitleBar
-    titleBar.BorderSizePixel = 0
+    -- Create a table to store tabs
+    window.Tabs = {}
 
-    local titleLabel = Instance.new("TextLabel", titleBar)
-    titleLabel.Size = UDim2.new(1, -50, 1, 0)
-    titleLabel.Position = UDim2.new(0, 50, 0, 0)
-    titleLabel.Text = title or "Hub"
-    titleLabel.TextColor3 = theme.TitleText
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.TextSize = 16
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    function window:MakeTab(options)
+        local tab = Instance.new("Frame")
+        tab.Size = UDim2.new(1, 0, 1, 0)
+        tab.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        tab.Visible = false
+        tab.Parent = tabContainer
 
-    local minimizeButton = Instance.new("TextButton", titleBar)
-    minimizeButton.Size = UDim2.new(0, 20, 0, 20)
-    minimizeButton.Position = UDim2.new(1, -70, 0, 0)
-    minimizeButton.Text = "-"
-    minimizeButton.TextColor3 = theme.TitleText
-    minimizeButton.BackgroundColor3 = theme.TitleBar
-    minimizeButton.BorderSizePixel = 0
-    minimizeButton.AutoButtonColor = false
-    minimizeButton.TextXAlignment = Enum.TextXAlignment.Center
+        -- Tab title
+        local tabTitle = Instance.new("TextLabel")
+        tabTitle.Size = UDim2.new(1, 0, 0.1, 0)
+        tabTitle.Text = options.Name or "Tab"
+        tabTitle.BackgroundTransparency = 1
+        tabTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabTitle.Parent = tab
 
-    local isMinimized = false
-    minimizeButton.MouseButton1Click:Connect(function()
-        if isMinimized then
-            mainFrame.Size = UDim2.new(0, 400, 0, 300)
-            minimizeButton.Text = "-"
-            isMinimized = false
-            tabButtonHolder.Visible = true
-        else
-            mainFrame.Size = UDim2.new(0, 400, 0, 20)
-            minimizeButton.Text = "+"
-            isMinimized = true
-            tabButtonHolder.Visible = false
-        end
-    end)
+        -- Tab icon
+        local tabIcon = Instance.new("ImageLabel")
+        tabIcon.Size = UDim2.new(0.1, 0, 0.1, 0)
+        tabIcon.Position = UDim2.new(0.9, 0, 0, 0)
+        tabIcon.Image = options.Icon or "rbxassetid://4483345998"
+        tabIcon.BackgroundTransparency = 1
+        tabIcon.Parent = tab
 
-    local closeButton = Instance.new("TextButton", titleBar)
-    closeButton.Size = UDim2.new(0, 20, 0, 20)
-    closeButton.Position = UDim2.new(1, -30, 0, 0)
-    closeButton.Text = "×"
-    closeButton.TextColor3 = theme.TitleText
-    closeButton.BackgroundColor3 = theme.TitleBar
-    closeButton.BorderSizePixel = 0
-    closeButton.AutoButtonColor = false
-    closeButton.TextXAlignment = Enum.TextXAlignment.Center
-    closeButton.MouseButton1Click:Connect(function()
-        screenGui:Destroy()
-    end)
+        -- Store tab elements
+        window.Tabs[options.Name] = tab
 
-    local tabButtonHolder = Instance.new("Frame", mainFrame)
-    tabButtonHolder.Size = UDim2.new(0, 100, 1, -20)
-    tabButtonHolder.Position = UDim2.new(0, 0, 0, 20)
-    tabButtonHolder.BackgroundColor3 = theme.Button
-    tabButtonHolder.BorderSizePixel = 0
+        return {
+            AddButton = function(buttonOptions)
+                local button = Instance.new("TextButton")
+                button.Size = UDim2.new(1, 0, 0.1, 0)
+                button.Text = buttonOptions.Name or "Button"
+                button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                button.TextColor3 = Color3.fromRGB(255, 255, 255)
+                button.Parent = tab
+                button.MouseButton1Click:Connect(buttonOptions.Callback)
+            end,
 
-    local tabHolder = Instance.new("Frame", mainFrame)
-    tabHolder.Size = UDim2.new(1, -100, 1, -20)
-    tabHolder.Position = UDim2.new(0, 100, 0, 20)
-    tabHolder.BackgroundColor3 = theme.ScrollFrame
-    tabHolder.BorderSizePixel = 0
+            AddToggle = function(toggleOptions)
+                local toggleFrame = Instance.new("Frame")
+                toggleFrame.Size = UDim2.new(1, 0, 0.1, 0)
+                toggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                toggleFrame.Parent = tab
 
-    local window = {frame = mainFrame, tabs = {}, tabButtonHolder = tabButtonHolder}
+                local toggleSwitch = Instance.new("TextButton")
+                toggleSwitch.Size = UDim2.new(0.1, 0, 1, 0)
+                toggleSwitch.Position = UDim2.new(0.9, 0, 0, 0)
+                toggleSwitch.Text = toggleOptions.Default and "ON" or "OFF"
+                toggleSwitch.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+                toggleSwitch.TextColor3 = Color3.fromRGB(255, 255, 255)
+                toggleSwitch.Parent = toggleFrame
 
-    function window:AddTab(name)
-        local tabIndex = #self.tabs + 1
+                toggleSwitch.MouseButton1Click:Connect(function()
+                    local newValue = toggleSwitch.Text == "OFF"
+                    toggleSwitch.Text = newValue and "ON" or "OFF"
+                    toggleOptions.Callback(newValue)
+                end)
+            end,
 
-        local tabButton = Instance.new("TextButton", self.tabButtonHolder)
-        tabButton.Text = name
-        tabButton.Size = UDim2.new(1, 0, 0, 40)
-        tabButton.Position = UDim2.new(0, 0, 0, (tabIndex - 1) * 45)
-        tabButton.BackgroundColor3 = theme.Button
-        tabButton.TextColor3 = theme.ButtonText
-        tabButton.BorderSizePixel = 0
-        tabButton.TextXAlignment = Enum.TextXAlignment.Left
+            -- Placeholder implementation for color picker
+            AddColorpicker = function(colorpickerOptions)
+                local colorPicker = Instance.new("Frame")
+                colorPicker.Size = UDim2.new(1, 0, 0.1, 0)
+                colorPicker.BackgroundColor3 = colorpickerOptions.Default or Color3.fromRGB(255, 0, 0)
+                colorPicker.Parent = tab
 
-        local tabScrollFrame = Instance.new("ScrollingFrame", tabHolder)
-        tabScrollFrame.Size = UDim2.new(1, 0, 1, 0)
-        tabScrollFrame.Position = UDim2.new(0, 0, 0, 0)
-        tabScrollFrame.BackgroundColor3 = theme.ScrollFrame
-        tabScrollFrame.BorderSizePixel = 0
-        tabScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-        tabScrollFrame.ScrollBarThickness = 8
-        tabScrollFrame.Visible = false
+                -- Color picker implementation here...
 
-        tabButton.MouseButton1Click:Connect(function()
-            for _, tab in pairs(self.tabs) do
-                tab.scrollFrame.Visible = false
+                colorPicker.MouseButton1Click:Connect(function()
+                    colorpickerOptions.Callback(colorPicker.BackgroundColor3)
+                end)
+            end,
+
+            -- Placeholder implementation for slider
+            AddSlider = function(sliderOptions)
+                local slider = Instance.new("Frame")
+                slider.Size = UDim2.new(1, 0, 0.1, 0)
+                slider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                slider.Parent = tab
+
+                local sliderLabel = Instance.new("TextLabel")
+                sliderLabel.Size = UDim2.new(1, 0, 0.2, 0)
+                sliderLabel.Text = sliderOptions.Name or "Slider"
+                sliderLabel.BackgroundTransparency = 1
+                sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                sliderLabel.Parent = slider
+
+                -- Slider implementation here...
+
+                slider.MouseButton1Click:Connect(function()
+                    sliderOptions.Callback(sliderOptions.Default or 0)
+                end)
+            end,
+
+            AddLabel = function(name)
+                local label = Instance.new("TextLabel")
+                label.Size = UDim2.new(1, 0, 0.1, 0)
+                label.Text = name or "Label"
+                label.BackgroundTransparency = 1
+                label.TextColor3 = Color3.fromRGB(255, 255, 255)
+                label.Parent = tab
+                return label
+            end,
+
+            AddParagraph = function(name, content)
+                local paragraph = Instance.new("Frame")
+                paragraph.Size = UDim2.new(1, 0, 0.2, 0)
+                paragraph.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                paragraph.Parent = tab
+
+                local paragraphTitle = Instance.new("TextLabel")
+                paragraphTitle.Size = UDim2.new(1, 0, 0.2, 0)
+                paragraphTitle.Text = name or "Paragraph"
+                paragraphTitle.BackgroundTransparency = 1
+                paragraphTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+                paragraphTitle.Parent = paragraph
+
+                local paragraphContent = Instance.new("TextLabel")
+                paragraphContent.Size = UDim2.new(1, 0, 0.8, 0)
+                paragraphContent.Text = content or "Content"
+                paragraphContent.BackgroundTransparency = 1
+                paragraphContent.TextColor3 = Color3.fromRGB(200, 200, 200)
+                paragraphContent.Parent = paragraph
+            end,
+
+            AddInput = function(inputOptions)
+                local input = Instance.new("TextBox")
+                input.Size = UDim2.new(1, 0, 0.1, 0)
+                input.Text = inputOptions.Default or ""
+                input.ClearTextOnFocus = inputOptions.TextDisappear or true
+                input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                input.TextColor3 = Color3.fromRGB(255, 255, 255)
+                input.Parent = tab
+
+                input.FocusLost:Connect(function()
+                    inputOptions.Callback(input.Text)
+                end)
+            end,
+
+            -- Placeholder implementation for key bindings
+            AddBind = function(bindOptions)
+                local bindFrame = Instance.new("Frame")
+                bindFrame.Size = UDim2.new(1, 0, 0.1, 0)
+                bindFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                bindFrame.Parent = tab
+
+                local bindLabel = Instance.new("TextLabel")
+                bindLabel.Size = UDim2.new(0.9, 0, 1, 0)
+                bindLabel.Text = bindOptions.Name or "Bind"
+                bindLabel.BackgroundTransparency = 1
+                bindLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                bindLabel.Parent = bindFrame
+
+                local bindKey = Instance.new("TextButton")
+                bindKey.Size = UDim2.new(0.1, 0, 1, 0)
+                bindKey.Position = UDim2.new(0.9, 0, 0, 0)
+                bindKey.Text = bindOptions.Default.Name or "Key"
+                bindKey.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                bindKey.TextColor3 = Color3.fromRGB(255, 255, 255)
+                bindKey.Parent = bindFrame
+
+                -- Keybind implementation here...
+
+                bindKey.MouseButton1Click:Connect(function()
+                    bindOptions.Callback()
+                end)
+            end,
+
+            -- Placeholder implementation for dropdown list
+            AddList = function(listOptions)
+                local list = Instance.new("Frame")
+                list.Size = UDim2.new(1, 0, 0.1, 0)
+                list.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                list.Parent = tab
+
+                local listLabel = Instance.new("TextLabel")
+                listLabel.Size = UDim2.new(1, 0, 0.2, 0)
+                listLabel.Text = listOptions.Name or "List"
+                listLabel.BackgroundTransparency = 1
+                listLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                listLabel.Parent = list
+
+                -- Dropdown list implementation here...
+
+                for _, option in ipairs(listOptions.Options) do
+                    local button = Instance.new("TextButton")
+                    button.Size = UDim2.new(1, 0, 0.1, 0)
+                    button.Text = option.Name or "Option"
+                    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    button.Parent = list
+                    button.MouseButton1Click:Connect(option.Callback)
+                end
+            end,
+
+            AddImage = function(imageId)
+                local image = Instance.new("ImageLabel")
+                image.Size = UDim2.new(1, 0, 0.1, 0)
+                image.Image = imageId or "rbxassetid://4483345998"
+                image.BackgroundTransparency = 1
+                image.Parent = tab
+                return image
+            end,
+
+            AddPlayerIcon = function(playerId)
+                local playerIcon = Instance.new("ImageLabel")
+                playerIcon.Size = UDim2.new(0.1, 0, 0.1, 0)
+                -- Fetch player image
+                playerIcon.Image = "rbxassetid://playerImageAssetId"  -- Placeholder
+                playerIcon.BackgroundTransparency = 1
+                playerIcon.Parent = tab
+                return playerIcon
             end
-            tabScrollFrame.Visible = true
-        end)
-
-        local tab = {scrollFrame = tabScrollFrame, elements = {}}
-
-        function tab:AddText(content)
-            local textLabel = Instance.new("TextLabel", self.scrollFrame)
-            textLabel.Text = content
-            textLabel.Size = UDim2.new(1, -10, 0, 40)
-            textLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-            textLabel.BackgroundColor3 = theme.Element
-            textLabel.TextColor3 = theme.ElementText
-            textLabel.BorderSizePixel = 0
-            textLabel.TextWrapped = true
-            textLabel.TextXAlignment = Enum.TextXAlignment.Left
-            table.insert(self.elements, textLabel)
-
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
-        end
-
-        function tab:AddButton(buttonText, callback)
-            local button = Instance.new("TextButton", self.scrollFrame)
-            button.Text = buttonText
-            button.Size = UDim2.new(1, -10, 0, 40)
-            button.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-            button.BackgroundColor3 = theme.Element
-            button.TextColor3 = theme.ElementText
-            button.BorderSizePixel = 0
-            button.TextWrapped = true
-            button.AutoButtonColor = false
-            button.TextXAlignment = Enum.TextXAlignment.Left
-            button.MouseButton1Click:Connect(callback)
-            table.insert(self.elements, button)
-
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
-        end
-
-        function tab:AddList(listText, items)
-            local isExpanded = false
-            local listLabel = Instance.new("TextButton", self.scrollFrame)
-            listLabel.Text = listText
-            listLabel.Size = UDim2.new(1, -10, 0, 40)
-            listLabel.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-            listLabel.BackgroundColor3 = theme.Element
-            listLabel.TextColor3 = theme.ElementText
-            listLabel.BorderSizePixel = 0
-            listLabel.TextWrapped = true
-            listLabel.AutoButtonColor = false
-            listLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-            local listFrame = Instance.new("Frame", self.scrollFrame)
-            listFrame.Size = UDim2.new(1, -10, 0, 0)
-            listFrame.Position = UDim2.new(0, 5, 0, 40)
-            listFrame.BackgroundColor3 = theme.ScrollFrame
-            listFrame.BorderSizePixel = 0
-            listFrame.Visible = false
-
-            for _, item in ipairs(items) do
-                local itemButton = Instance.new("TextButton", listFrame)
-                itemButton.Text = item
-                itemButton.Size = UDim2.new(1, 0, 0, 30)
-                itemButton.Position = UDim2.new(0, 0, 0, #listFrame:GetChildren() * 30)
-                itemButton.BackgroundColor3 = theme.Element
-                itemButton.TextColor3 = theme.ElementText
-                itemButton.BorderSizePixel = 0
-                itemButton.TextWrapped = true
-                itemButton.AutoButtonColor = false
-                itemButton.TextXAlignment = Enum.TextXAlignment.Left
-            end
-
-            listLabel.MouseButton1Click:Connect(function()
-                isExpanded = not isExpanded
-                listFrame.Visible = isExpanded
-            end)
-
-            table.insert(self.elements, listLabel)
-            table.insert(self.elements, listFrame)
-
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
-        end
-
-        function tab:AddInput(inputLabel, callback)
-            local inputFrame = Instance.new("Frame", self.scrollFrame)
-            inputFrame.Size = UDim2.new(1, -10, 0, 60)
-            inputFrame.Position = UDim2.new(0, 5, 0, #self.elements * 45)
-            inputFrame.BackgroundColor3 = theme.Element
-            inputFrame.BorderSizePixel = 0
-
-            local label = Instance.new("TextLabel", inputFrame)
-            label.Size = UDim2.new(1, -100, 0, 20)
-            label.Position = UDim2.new(0, 0, 0, 0)
-            label.Text = inputLabel
-            label.TextColor3 = theme.ElementText
-            label.BackgroundTransparency = 1
-            label.TextSize = 14
-            label.TextXAlignment = Enum.TextXAlignment.Left
-
-            local inputBox = Instance.new("TextBox", inputFrame)
-            inputBox.Size = UDim2.new(1, -10, 0, 30)
-            inputBox.Position = UDim2.new(0, 0, 0, 20)
-            inputBox.Text = ""
-            inputBox.BackgroundColor3 = theme.Button
-            inputBox.TextColor3 = theme.ButtonText
-            inputBox.BorderSizePixel = 0
-            inputBox.TextXAlignment = Enum.TextXAlignment.Left
-            inputBox.PlaceholderText = "Enter text here..."
-
-            local submitButton = Instance.new("TextButton", inputFrame)
-            submitButton.Size = UDim2.new(0, 80, 1, 0)
-            submitButton.Position = UDim2.new(1, -90, 0, 0)
-            submitButton.Text = "Submit"
-            submitButton.BackgroundColor3 = theme.Button
-            submitButton.TextColor3 = theme.ButtonText
-            submitButton.BorderSizePixel = 0
-            submitButton.AutoButtonColor = false
-            submitButton.MouseButton1Click:Connect(function()
-                callback(inputBox.Text)
-            end)
-
-            table.insert(self.elements, inputFrame)
-
-            self.scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #self.elements * 45)
-        end
-
-        table.insert(self.tabs, tab)
-        return tab
+        }
     end
 
     return window
+end
+
+-- Destroy the interface
+function JimmysCoolLibrary:Destroy()
+    for _, window in pairs(game.Players.LocalPlayer.PlayerGui:GetChildren()) do
+        if window:IsA("ScreenGui") and window.Name ~= "DefaultGui" then
+            window:Destroy()
+        end
+    end
 end
 
 return JimmysCoolLibrary

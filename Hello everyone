@@ -1,260 +1,310 @@
--- Define the library
 local JimmysCoolLibrary = {}
 
--- Create the main window
+local theme = {
+    Button = Color3.fromRGB(255, 0, 0),
+    ButtonText = Color3.fromRGB(255, 255, 255),
+    ToggleButton = Color3.fromRGB(100, 100, 100),
+    ToggleOn = Color3.fromRGB(0, 255, 0),
+    ToggleOff = Color3.fromRGB(255, 0, 0),
+    Element = Color3.fromRGB(50, 50, 50),
+    ElementText = Color3.fromRGB(255, 255, 255),
+    ScrollFrame = Color3.fromRGB(200, 200, 200)
+}
+
 function JimmysCoolLibrary:MakeWindow(options)
     local window = Instance.new("ScreenGui")
-    window.Name = options.Name or "Window"
+    window.Name = options.Name
     window.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Creating the main frame
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0.5, 0, 0.5, 0)
-    mainFrame.Position = UDim2.new(0.25, 0, 0.25, 0)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    mainFrame.Parent = window
-
-    -- Title bar
-    local titleBar = Instance.new("TextLabel")
-    titleBar.Size = UDim2.new(1, 0, 0.1, 0)
-    titleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleBar.Text = options.Name or "Window"
-    titleBar.Parent = mainFrame
-
-    -- Tab container
-    local tabContainer = Instance.new("Frame")
-    tabContainer.Size = UDim2.new(1, 0, 0.9, 0)
-    tabContainer.Position = UDim2.new(0, 0, 0.1, 0)
-    tabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabContainer.Parent = mainFrame
-
-    -- Create a table to store tabs
-    window.Tabs = {}
-
-    function window:MakeTab(options)
-        local tab = Instance.new("Frame")
+    window.MakeTab = function(tabOptions)
+        local tab = Instance.new("Frame", window)
         tab.Size = UDim2.new(1, 0, 1, 0)
-        tab.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        tab.Visible = false
-        tab.Parent = tabContainer
+        tab.BackgroundColor3 = theme.Element
 
-        -- Tab title
-        local tabTitle = Instance.new("TextLabel")
-        tabTitle.Size = UDim2.new(1, 0, 0.1, 0)
-        tabTitle.Text = options.Name or "Tab"
-        tabTitle.BackgroundTransparency = 1
-        tabTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tabTitle.Parent = tab
+        tab.AddSection = function(sectionOptions)
+            local section = Instance.new("Frame", tab)
+            section.Size = UDim2.new(1, 0, 0, 100)
+            section.BackgroundColor3 = theme.Element
+            return section
+        end
 
-        -- Tab icon
-        local tabIcon = Instance.new("ImageLabel")
-        tabIcon.Size = UDim2.new(0.1, 0, 0.1, 0)
-        tabIcon.Position = UDim2.new(0.9, 0, 0, 0)
-        tabIcon.Image = options.Icon or "rbxassetid://4483345998"
-        tabIcon.BackgroundTransparency = 1
-        tabIcon.Parent = tab
+        tab.AddButton = function(options)
+            local button = Instance.new("TextButton", tab)
+            button.Text = options.Name
+            button.Size = UDim2.new(1, 0, 0, 40)
+            button.BackgroundColor3 = theme.Button
+            button.TextColor3 = theme.ButtonText
+            button.BorderSizePixel = 0
+            button.TextXAlignment = Enum.TextXAlignment.Left
+            button.MouseButton1Click:Connect(options.Callback)
+        end
 
-        -- Store tab elements
-        window.Tabs[options.Name] = tab
+        tab.AddToggle = function(options)
+            local toggle = Instance.new("TextButton", tab)
+            toggle.Text = options.Name
+            toggle.Size = UDim2.new(1, 0, 0, 40)
+            toggle.BackgroundColor3 = theme.ToggleButton
+            toggle.TextColor3 = theme.ButtonText
+            toggle.BorderSizePixel = 0
+            toggle.TextXAlignment = Enum.TextXAlignment.Left
 
-        return {
-            AddButton = function(buttonOptions)
-                local button = Instance.new("TextButton")
-                button.Size = UDim2.new(1, 0, 0.1, 0)
-                button.Text = buttonOptions.Name or "Button"
-                button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                button.TextColor3 = Color3.fromRGB(255, 255, 255)
-                button.Parent = tab
-                button.MouseButton1Click:Connect(buttonOptions.Callback)
-            end,
+            local isOn = options.Default
+            toggle.BackgroundColor3 = isOn and theme.ToggleOn or theme.ToggleOff
+            toggle.MouseButton1Click:Connect(function()
+                isOn = not isOn
+                toggle.BackgroundColor3 = isOn and theme.ToggleOn or theme.ToggleOff
+                options.Callback(isOn)
+            end)
+        end
 
-            AddToggle = function(toggleOptions)
-                local toggleFrame = Instance.new("Frame")
-                toggleFrame.Size = UDim2.new(1, 0, 0.1, 0)
-                toggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-                toggleFrame.Parent = tab
+        tab.AddColorpicker = function(options)
+            local colorButton = Instance.new("TextButton", tab)
+            colorButton.Text = options.Name
+            colorButton.Size = UDim2.new(1, 0, 0, 40)
+            colorButton.BackgroundColor3 = options.Default
+            colorButton.TextColor3 = theme.ButtonText
+            colorButton.BorderSizePixel = 0
+            colorButton.TextXAlignment = Enum.TextXAlignment.Left
 
-                local toggleSwitch = Instance.new("TextButton")
-                toggleSwitch.Size = UDim2.new(0.1, 0, 1, 0)
-                toggleSwitch.Position = UDim2.new(0.9, 0, 0, 0)
-                toggleSwitch.Text = toggleOptions.Default and "ON" or "OFF"
-                toggleSwitch.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                toggleSwitch.TextColor3 = Color3.fromRGB(255, 255, 255)
-                toggleSwitch.Parent = toggleFrame
+            colorButton.MouseButton1Click:Connect(function()
+                local color = options.Default
+                colorButton.BackgroundColor3 = color
+                options.Callback(color)
+            end)
+        end
 
-                toggleSwitch.MouseButton1Click:Connect(function()
-                    local newValue = toggleSwitch.Text == "OFF"
-                    toggleSwitch.Text = newValue and "ON" or "OFF"
-                    toggleOptions.Callback(newValue)
-                end)
-            end,
+        tab.AddSlider = function(options)
+            local sliderFrame = Instance.new("Frame", tab)
+            sliderFrame.Size = UDim2.new(1, 0, 0, 60)
+            sliderFrame.BackgroundColor3 = theme.Element
+            sliderFrame.BorderSizePixel = 0
 
-            -- Placeholder implementation for color picker
-            AddColorpicker = function(colorpickerOptions)
-                local colorPicker = Instance.new("Frame")
-                colorPicker.Size = UDim2.new(1, 0, 0.1, 0)
-                colorPicker.BackgroundColor3 = colorpickerOptions.Default or Color3.fromRGB(255, 0, 0)
-                colorPicker.Parent = tab
+            local sliderLabel = Instance.new("TextLabel", sliderFrame)
+            sliderLabel.Size = UDim2.new(1, 0, 0, 20)
+            sliderLabel.Text = options.Name .. ": " .. options.Default .. options.ValueName
+            sliderLabel.BackgroundColor3 = theme.Element
+            sliderLabel.TextColor3 = theme.ElementText
+            sliderLabel.BorderSizePixel = 0
 
-                -- Color picker implementation here...
+            local sliderBar = Instance.new("Frame", sliderFrame)
+            sliderBar.Size = UDim2.new(1, 0, 0, 10)
+            sliderBar.Position = UDim2.new(0, 0, 0, 25)
+            sliderBar.BackgroundColor3 = theme.Button
 
-                colorPicker.MouseButton1Click:Connect(function()
-                    colorpickerOptions.Callback(colorPicker.BackgroundColor3)
-                end)
-            end,
+            local sliderIndicator = Instance.new("Frame", sliderBar)
+            sliderIndicator.Size = UDim2.new((options.Default - options.Min) / (options.Max - options.Min), 0, 1, 0)
+            sliderIndicator.BackgroundColor3 = theme.ButtonText
 
-            -- Placeholder implementation for slider
-            AddSlider = function(sliderOptions)
-                local slider = Instance.new("Frame")
-                slider.Size = UDim2.new(1, 0, 0.1, 0)
-                slider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-                slider.Parent = tab
+            local sliderInput = Instance.new("TextButton", sliderBar)
+            sliderInput.Size = UDim2.new(1, 0, 1, 0)
+            sliderInput.BackgroundTransparency = 1
+            sliderInput.Text = ""
+            sliderInput.MouseButton1Click:Connect(function()
+                local value = options.Default
+                sliderLabel.Text = options.Name .. ": " .. value .. options.ValueName
+                options.Callback(value)
+            end)
+        end
 
-                local sliderLabel = Instance.new("TextLabel")
-                sliderLabel.Size = UDim2.new(1, 0, 0.2, 0)
-                sliderLabel.Text = sliderOptions.Name or "Slider"
-                sliderLabel.BackgroundTransparency = 1
-                sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                sliderLabel.Parent = slider
+        tab.AddLabel = function(text)
+            local label = Instance.new("TextLabel", tab)
+            label.Text = text
+            label.Size = UDim2.new(1, 0, 0, 40)
+            label.BackgroundColor3 = theme.Element
+            label.TextColor3 = theme.ElementText
+            label.BorderSizePixel = 0
+            label.TextXAlignment = Enum.TextXAlignment.Left
+        end
 
-                -- Slider implementation here...
+        tab.AddParagraph = function(title, content)
+            local paragraphFrame = Instance.new("Frame", tab)
+            paragraphFrame.Size = UDim2.new(1, 0, 0, 80)
+            paragraphFrame.BackgroundColor3 = theme.Element
+            paragraphFrame.BorderSizePixel = 0
 
-                slider.MouseButton1Click:Connect(function()
-                    sliderOptions.Callback(sliderOptions.Default or 0)
-                end)
-            end,
+            local titleLabel = Instance.new("TextLabel", paragraphFrame)
+            titleLabel.Size = UDim2.new(1, 0, 0, 20)
+            titleLabel.Text = title
+            titleLabel.BackgroundColor3 = theme.Element
+            titleLabel.TextColor3 = theme.ElementText
+            titleLabel.BorderSizePixel = 0
 
-            AddLabel = function(name)
-                local label = Instance.new("TextLabel")
-                label.Size = UDim2.new(1, 0, 0.1, 0)
-                label.Text = name or "Label"
-                label.BackgroundTransparency = 1
-                label.TextColor3 = Color3.fromRGB(255, 255, 255)
-                label.Parent = tab
-                return label
-            end,
+            local contentLabel = Instance.new("TextLabel", paragraphFrame)
+            contentLabel.Size = UDim2.new(1, 0, 1, -20)
+            contentLabel.Position = UDim2.new(0, 0, 0, 20)
+            contentLabel.Text = content
+            contentLabel.BackgroundColor3 = theme.Element
+            contentLabel.TextColor3 = theme.ElementText
+            contentLabel.BorderSizePixel = 0
+            contentLabel.TextWrapped = true
+        end
 
-            AddParagraph = function(name, content)
-                local paragraph = Instance.new("Frame")
-                paragraph.Size = UDim2.new(1, 0, 0.2, 0)
-                paragraph.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-                paragraph.Parent = tab
+        tab.AddInput = function(options)
+            local inputBox = Instance.new("TextBox", tab)
+            inputBox.Text = options.Default
+            inputBox.Size = UDim2.new(1, 0, 0, 40)
+            inputBox.BackgroundColor3 = theme.Element
+            inputBox.TextColor3 = theme.ElementText
+            inputBox.BorderSizePixel = 0
+            inputBox.TextXAlignment = Enum.TextXAlignment.Left
 
-                local paragraphTitle = Instance.new("TextLabel")
-                paragraphTitle.Size = UDim2.new(1, 0, 0.2, 0)
-                paragraphTitle.Text = name or "Paragraph"
-                paragraphTitle.BackgroundTransparency = 1
-                paragraphTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                paragraphTitle.Parent = paragraph
-
-                local paragraphContent = Instance.new("TextLabel")
-                paragraphContent.Size = UDim2.new(1, 0, 0.8, 0)
-                paragraphContent.Text = content or "Content"
-                paragraphContent.BackgroundTransparency = 1
-                paragraphContent.TextColor3 = Color3.fromRGB(200, 200, 200)
-                paragraphContent.Parent = paragraph
-            end,
-
-            AddInput = function(inputOptions)
-                local input = Instance.new("TextBox")
-                input.Size = UDim2.new(1, 0, 0.1, 0)
-                input.Text = inputOptions.Default or ""
-                input.ClearTextOnFocus = inputOptions.TextDisappear or true
-                input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                input.TextColor3 = Color3.fromRGB(255, 255, 255)
-                input.Parent = tab
-
-                input.FocusLost:Connect(function()
-                    inputOptions.Callback(input.Text)
-                end)
-            end,
-
-            -- Placeholder implementation for key bindings
-            AddBind = function(bindOptions)
-                local bindFrame = Instance.new("Frame")
-                bindFrame.Size = UDim2.new(1, 0, 0.1, 0)
-                bindFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-                bindFrame.Parent = tab
-
-                local bindLabel = Instance.new("TextLabel")
-                bindLabel.Size = UDim2.new(0.9, 0, 1, 0)
-                bindLabel.Text = bindOptions.Name or "Bind"
-                bindLabel.BackgroundTransparency = 1
-                bindLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                bindLabel.Parent = bindFrame
-
-                local bindKey = Instance.new("TextButton")
-                bindKey.Size = UDim2.new(0.1, 0, 1, 0)
-                bindKey.Position = UDim2.new(0.9, 0, 0, 0)
-                bindKey.Text = bindOptions.Default.Name or "Key"
-                bindKey.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-                bindKey.TextColor3 = Color3.fromRGB(255, 255, 255)
-                bindKey.Parent = bindFrame
-
-                -- Keybind implementation here...
-
-                bindKey.MouseButton1Click:Connect(function()
-                    bindOptions.Callback()
-                end)
-            end,
-
-            -- Placeholder implementation for dropdown list
-            AddList = function(listOptions)
-                local list = Instance.new("Frame")
-                list.Size = UDim2.new(1, 0, 0.1, 0)
-                list.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-                list.Parent = tab
-
-                local listLabel = Instance.new("TextLabel")
-                listLabel.Size = UDim2.new(1, 0, 0.2, 0)
-                listLabel.Text = listOptions.Name or "List"
-                listLabel.BackgroundTransparency = 1
-                listLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                listLabel.Parent = list
-
-                -- Dropdown list implementation here...
-
-                for _, option in ipairs(listOptions.Options) do
-                    local button = Instance.new("TextButton")
-                    button.Size = UDim2.new(1, 0, 0.1, 0)
-                    button.Text = option.Name or "Option"
-                    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    button.Parent = list
-                    button.MouseButton1Click:Connect(option.Callback)
-                end
-            end,
-
-            AddImage = function(imageId)
-                local image = Instance.new("ImageLabel")
-                image.Size = UDim2.new(1, 0, 0.1, 0)
-                image.Image = imageId or "rbxassetid://4483345998"
-                image.BackgroundTransparency = 1
-                image.Parent = tab
-                return image
-            end,
-
-            AddPlayerIcon = function(playerId)
-                local playerIcon = Instance.new("ImageLabel")
-                playerIcon.Size = UDim2.new(0.1, 0, 0.1, 0)
-                -- Fetch player image
-                playerIcon.Image = "rbxassetid://playerImageAssetId"  -- Placeholder
-                playerIcon.BackgroundTransparency = 1
-                playerIcon.Parent = tab
-                return playerIcon
+            if options.TextDisappear then
+                inputBox.ClearTextOnFocus = true
             end
-        }
+
+            inputBox.FocusLost:Connect(function(enterPressed)
+                if enterPressed then
+                    options.Callback(inputBox.Text)
+                end
+            end)
+        end
+
+        tab.AddBind = function(options)
+            local bindLabel = Instance.new("TextLabel", tab)
+            bindLabel.Text = options.Name .. ": " .. options.Default.Name
+            bindLabel.Size = UDim2.new(1, 0, 0, 40)
+            bindLabel.BackgroundColor3 = theme.Element
+            bindLabel.TextColor3 = theme.ElementText
+            bindLabel.BorderSizePixel = 0
+            bindLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+            local userInputService = game:GetService("UserInputService")
+
+            userInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+                if options.Hold then
+                    if input.KeyCode == options.Default then
+                        options.Callback()
+                    end
+                else
+                    if input.KeyCode == options.Default then
+                        options.Callback()
+                    end
+                end
+            end)
+        end
+
+        tab.AddList = function(options)
+            local dropdownFrame = Instance.new("Frame", tab)
+            dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+            dropdownFrame.BackgroundColor3 = theme.Element
+            dropdownFrame.BorderSizePixel = 0
+
+            local dropdownLabel = Instance.new("TextLabel", dropdownFrame)
+            dropdownLabel.Size = UDim2.new(1, 0, 0, 20)
+            dropdownLabel.Text = options.Name .. ": " .. options.Default
+            dropdownLabel.BackgroundColor3 = theme.Element
+            dropdownLabel.TextColor3 = theme.ElementText
+            dropdownLabel.BorderSizePixel = 0
+
+            local dropdownButton = Instance.new("TextButton", dropdownFrame)
+            dropdownButton.Size = UDim2.new(1, 0, 1, -20)
+            dropdownButton.Position = UDim2.new(0, 0, 0, 20)
+            dropdownButton.BackgroundColor3 = theme.Button
+            dropdownButton.TextColor3 = theme.ButtonText
+            dropdownButton.BorderSizePixel = 0
+            dropdownButton.Text = "Select Option"
+
+            local dropdownList = Instance.new("Frame", dropdownButton)
+            dropdownList.Size = UDim2.new(1, 0, 1, 0)
+            dropdownList.Position = UDim2.new(0, 0, 1, 0)
+            dropdownList.BackgroundColor3 = theme.ScrollFrame
+            dropdownList.Visible = false
+
+            for _, option in ipairs(options.Options) do
+                local listItem = Instance.new("TextButton", dropdownList)
+                listItem.Size = UDim2.new(1, 0, 0, 40)
+                listItem.BackgroundColor3 = theme.Button
+                listItem.TextColor3 = theme.ButtonText
+                listItem.Text = option.Name
+                listItem.BorderSizePixel = 0
+                listItem.MouseButton1Click:Connect(function()
+                    dropdownLabel.Text = options.Name .. ": " .. option.Name
+                    option.Callback()
+                end)
+            end
+
+            dropdownButton.MouseButton1Click:Connect(function()
+                dropdownList.Visible = not dropdownList.Visible
+            end)
+        end
+
+        tab.AddImage = function(imageId)
+            local image = Instance.new("ImageLabel", tab)
+            image.Image = imageId
+            image.Size = UDim2.new(1, 0, 0, 40)
+            image.BackgroundColor3 = theme.Element
+            image.BorderSizePixel = 0
+        end
+
+        tab.AddPlayerIcon = function(playerName)
+            local player = game:GetService("Players"):FindFirstChild(playerName)
+            if not player then return end
+
+            local icon = Instance.new("ImageLabel", tab)
+            icon.Image = "rbxassetid://" .. player.UserId
+            icon.Size = UDim2.new(1, 0, 0, 40)
+            icon.BackgroundColor3 = theme.Element
+            icon.BorderSizePixel = 0
+        end
+
+        return tab
     end
 
     return window
 end
 
--- Destroy the interface
+function JimmysCoolLibrary:MakeNotification(options)
+    local notification = Instance.new("ScreenGui")
+    notification.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame", notification)
+    frame.Size = UDim2.new(0, 200, 0, 100)
+    frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+    frame.BackgroundColor3 = theme.Element
+    frame.BorderSizePixel = 0
+
+    local title = Instance.new("TextLabel", frame)
+    title.Text = options.Name
+    title.Size = UDim2.new(1, 0, 0, 30)
+    title.BackgroundColor3 = theme.Element
+    title.TextColor3 = theme.ElementText
+    title.BorderSizePixel = 0
+
+    local description = Instance.new("TextLabel", frame)
+    description.Text = options.Description
+    description.Size = UDim2.new(1, 0, 1, -30)
+    description.Position = UDim2.new(0, 0, 0, 30)
+    description.BackgroundColor3 = theme.Element
+    description.TextColor3 = theme.ElementText
+    description.BorderSizePixel = 0
+    description.TextWrapped = true
+
+    local buttons = Instance.new("Frame", frame)
+    buttons.Size = UDim2.new(1, 0, 0, 30)
+    buttons.Position = UDim2.new(0, 0, 1, -30)
+    buttons.BackgroundColor3 = theme.Element
+    buttons.BorderSizePixel = 0
+
+    for i, buttonOptions in ipairs(options.Options) do
+        local button = Instance.new("TextButton", buttons)
+        button.Text = buttonOptions.Name
+        button.Size = UDim2.new(1 / #options.Options, 0, 1, 0)
+        button.Position = UDim2.new((i - 1) / #options.Options, 0, 0, 0)
+        button.BackgroundColor3 = theme.Button
+        button.TextColor3 = theme.ButtonText
+        button.BorderSizePixel = 0
+        button.MouseButton1Click:Connect(buttonOptions.Callback)
+    end
+
+    wait(options.Time)
+    notification:Destroy()
+end
+
 function JimmysCoolLibrary:Destroy()
-    for _, window in pairs(game.Players.LocalPlayer.PlayerGui:GetChildren()) do
-        if window:IsA("ScreenGui") and window.Name ~= "DefaultGui" then
-            window:Destroy()
+    for _, object in ipairs(workspace:GetChildren()) do
+        if object:IsA("ScreenGui") and object.Name == "JimmysCoolLibrary" then
+            object:Destroy()
         end
     end
 end

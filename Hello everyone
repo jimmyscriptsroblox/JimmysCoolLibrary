@@ -16,19 +16,20 @@ function JimmysCoolLibrary:MakeWindow(options)
     window.Name = options.Name
     window.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    window.MakeTab = function(tabOptions)
+    -- Function to create a tab
+    function window:MakeTab(tabOptions)
         local tab = Instance.new("Frame", window)
         tab.Size = UDim2.new(1, 0, 1, 0)
         tab.BackgroundColor3 = theme.Element
 
-        tab.AddSection = function(sectionOptions)
+        function tab:AddSection(sectionOptions)
             local section = Instance.new("Frame", tab)
             section.Size = UDim2.new(1, 0, 0, 100)
             section.BackgroundColor3 = theme.Element
             return section
         end
 
-        tab.AddButton = function(options)
+        function tab:AddButton(options)
             local button = Instance.new("TextButton", tab)
             button.Text = options.Name
             button.Size = UDim2.new(1, 0, 0, 40)
@@ -39,7 +40,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             button.MouseButton1Click:Connect(options.Callback)
         end
 
-        tab.AddToggle = function(options)
+        function tab:AddToggle(options)
             local toggle = Instance.new("TextButton", tab)
             toggle.Text = options.Name
             toggle.Size = UDim2.new(1, 0, 0, 40)
@@ -57,7 +58,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             end)
         end
 
-        tab.AddColorpicker = function(options)
+        function tab:AddColorpicker(options)
             local colorButton = Instance.new("TextButton", tab)
             colorButton.Text = options.Name
             colorButton.Size = UDim2.new(1, 0, 0, 40)
@@ -73,7 +74,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             end)
         end
 
-        tab.AddSlider = function(options)
+        function tab:AddSlider(options)
             local sliderFrame = Instance.new("Frame", tab)
             sliderFrame.Size = UDim2.new(1, 0, 0, 60)
             sliderFrame.BackgroundColor3 = theme.Element
@@ -106,7 +107,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             end)
         end
 
-        tab.AddLabel = function(text)
+        function tab:AddLabel(text)
             local label = Instance.new("TextLabel", tab)
             label.Text = text
             label.Size = UDim2.new(1, 0, 0, 40)
@@ -116,7 +117,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             label.TextXAlignment = Enum.TextXAlignment.Left
         end
 
-        tab.AddParagraph = function(title, content)
+        function tab:AddParagraph(title, content)
             local paragraphFrame = Instance.new("Frame", tab)
             paragraphFrame.Size = UDim2.new(1, 0, 0, 80)
             paragraphFrame.BackgroundColor3 = theme.Element
@@ -139,7 +140,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             contentLabel.TextWrapped = true
         end
 
-        tab.AddInput = function(options)
+        function tab:AddInput(options)
             local inputBox = Instance.new("TextBox", tab)
             inputBox.Text = options.Default
             inputBox.Size = UDim2.new(1, 0, 0, 40)
@@ -159,7 +160,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             end)
         end
 
-        tab.AddBind = function(options)
+        function tab:AddBind(options)
             local bindLabel = Instance.new("TextLabel", tab)
             bindLabel.Text = options.Name .. ": " .. options.Default.Name
             bindLabel.Size = UDim2.new(1, 0, 0, 40)
@@ -184,7 +185,7 @@ function JimmysCoolLibrary:MakeWindow(options)
             end)
         end
 
-        tab.AddList = function(options)
+        function tab:AddList(options)
             local dropdownFrame = Instance.new("Frame", tab)
             dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
             dropdownFrame.BackgroundColor3 = theme.Element
@@ -207,20 +208,22 @@ function JimmysCoolLibrary:MakeWindow(options)
 
             local dropdownList = Instance.new("Frame", dropdownButton)
             dropdownList.Size = UDim2.new(1, 0, 1, 0)
-            dropdownList.Position = UDim2.new(0, 0, 1, 0)
+            dropdownList.Position = UDim2.new(0, 0, 0, 20)
             dropdownList.BackgroundColor3 = theme.ScrollFrame
             dropdownList.Visible = false
 
-            for _, option in ipairs(options.Options) do
-                local listItem = Instance.new("TextButton", dropdownList)
-                listItem.Size = UDim2.new(1, 0, 0, 40)
-                listItem.BackgroundColor3 = theme.Button
-                listItem.TextColor3 = theme.ButtonText
-                listItem.Text = option.Name
-                listItem.BorderSizePixel = 0
-                listItem.MouseButton1Click:Connect(function()
-                    dropdownLabel.Text = options.Name .. ": " .. option.Name
-                    option.Callback()
+            for _, option in ipairs(options.List) do
+                local optionButton = Instance.new("TextButton", dropdownList)
+                optionButton.Text = option
+                optionButton.Size = UDim2.new(1, 0, 0, 30)
+                optionButton.BackgroundColor3 = theme.Button
+                optionButton.TextColor3 = theme.ButtonText
+                optionButton.BorderSizePixel = 0
+
+                optionButton.MouseButton1Click:Connect(function()
+                    dropdownLabel.Text = options.Name .. ": " .. option
+                    options.Callback(option)
+                    dropdownList.Visible = false
                 end)
             end
 
@@ -229,84 +232,50 @@ function JimmysCoolLibrary:MakeWindow(options)
             end)
         end
 
-        tab.AddImage = function(imageId)
+        function tab:AddImage(options)
             local image = Instance.new("ImageLabel", tab)
-            image.Image = imageId
-            image.Size = UDim2.new(1, 0, 0, 40)
-            image.BackgroundColor3 = theme.Element
+            image.Image = options.Image
+            image.Size = UDim2.new(1, 0, 1, 0)
+            image.BackgroundTransparency = 1
             image.BorderSizePixel = 0
         end
 
-        tab.AddPlayerIcon = function(playerName)
-            local player = game:GetService("Players"):FindFirstChild(playerName)
-            if not player then return end
+        function tab:AddPlayerIcon(options)
+            local playerIcon = Instance.new("ImageLabel", tab)
+            playerIcon.Size = UDim2.new(1, 0, 1, 0)
+            playerIcon.BackgroundTransparency = 1
+            playerIcon.BorderSizePixel = 0
 
-            local icon = Instance.new("ImageLabel", tab)
-            icon.Image = "rbxassetid://" .. player.UserId
-            icon.Size = UDim2.new(1, 0, 0, 40)
-            icon.BackgroundColor3 = theme.Element
-            icon.BorderSizePixel = 0
+            local player = game.Players:FindFirstChild(options.PlayerName)
+            if player and player.Character and player.Character:FindFirstChild("Head") then
+                local head = player.Character.Head
+                local textureId = head:FindFirstChild("Face") and head.Face.TextureId or ""
+                playerIcon.Image = textureId
+            end
+        end
+
+        function tab:AddNotification(options)
+            local notificationFrame = Instance.new("Frame", tab)
+            notificationFrame.Size = UDim2.new(1, 0, 0, 60)
+            notificationFrame.BackgroundColor3 = theme.Element
+            notificationFrame.BorderSizePixel = 0
+
+            local notificationLabel = Instance.new("TextLabel", notificationFrame)
+            notificationLabel.Size = UDim2.new(1, 0, 1, 0)
+            notificationLabel.Text = options.Message
+            notificationLabel.BackgroundColor3 = theme.Element
+            notificationLabel.TextColor3 = theme.ElementText
+            notificationLabel.BorderSizePixel = 0
+            notificationLabel.TextWrapped = true
+
+            task.wait(options.Duration)
+            notificationFrame:Destroy()
         end
 
         return tab
     end
 
     return window
-end
-
-function JimmysCoolLibrary:MakeNotification(options)
-    local notification = Instance.new("ScreenGui")
-    notification.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-    local frame = Instance.new("Frame", notification)
-    frame.Size = UDim2.new(0, 200, 0, 100)
-    frame.Position = UDim2.new(0.5, -100, 0.5, -50)
-    frame.BackgroundColor3 = theme.Element
-    frame.BorderSizePixel = 0
-
-    local title = Instance.new("TextLabel", frame)
-    title.Text = options.Name
-    title.Size = UDim2.new(1, 0, 0, 30)
-    title.BackgroundColor3 = theme.Element
-    title.TextColor3 = theme.ElementText
-    title.BorderSizePixel = 0
-
-    local description = Instance.new("TextLabel", frame)
-    description.Text = options.Description
-    description.Size = UDim2.new(1, 0, 1, -30)
-    description.Position = UDim2.new(0, 0, 0, 30)
-    description.BackgroundColor3 = theme.Element
-    description.TextColor3 = theme.ElementText
-    description.BorderSizePixel = 0
-    description.TextWrapped = true
-
-    local buttons = Instance.new("Frame", frame)
-    buttons.Size = UDim2.new(1, 0, 0, 30)
-    buttons.Position = UDim2.new(0, 0, 1, -30)
-    buttons.BackgroundColor3 = theme.Element
-    buttons.BorderSizePixel = 0
-
-    for i, buttonOptions in ipairs(options.Options) do
-        local button = Instance.new("TextButton", buttons)
-        button.Text = buttonOptions.Name
-        button.Size = UDim2.new(1 / #options.Options, 0, 1, 0)
-        button.Position = UDim2.new((i - 1) / #options.Options, 0, 0, 0)
-        button.BackgroundColor3 = theme.Button
-        button.TextColor3 = theme.ButtonText
-        button.BorderSizePixel = 0
-        button.MouseButton1Click:Connect(buttonOptions.Callback)
-    end
-
-    wait(options.Time)
-    notification:Destroy()
-end
-
-function JimmysCoolLibrary:Destroy()
-    for _, object in ipairs(workspace:GetChildren()) do
-        if object:IsA("ScreenGui") and object.Name == "JimmysCoolLibrary" then
-            object:Destroy()
-        end
-    end
 end
 
 return JimmysCoolLibrary
